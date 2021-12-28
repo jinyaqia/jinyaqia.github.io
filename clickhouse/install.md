@@ -1,4 +1,5 @@
 # clickhouse集群2副本安装
+
 {:toc}
 * TOC
 ## 使用4台机器
