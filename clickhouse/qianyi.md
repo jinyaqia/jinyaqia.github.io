@@ -1,4 +1,5 @@
-[TOC]
+* TOC
+{:toc}
 
 # 背景
 
@@ -15,6 +16,7 @@
 新节点安装时，配置文件的remote_servers中的集群配置和旧集群一致，新节点只是做一个查询转发。
 
 从旧节点中导出非system表的建表语句，由于一份表对应着一个本地表和一个分布式表，因此需要先创建完本地表。
+
 ```
 导出本地表
 echo "select create_table_query||';'  from system.tables where database != 'system' and engine!='Distributed' order by name desc" | /data/clickhouse/bin/clickhouse-client --password xxx --port 9000 > localtable.txt
@@ -23,7 +25,9 @@ echo "select create_table_query||';'  from system.tables where database != 'syst
 echo "select create_table_query||';'  from system.tables where database != 'system' and engine='Distributed' order by name desc" | /data/clickhouse/bin/clickhouse-client --password xxx --port 9000 > distable.txt
 
 ```
+
 将建表语句发送到新节点执行
+
 ```
 执行本地表的ddl
 ./sendfile.sh ckip.txt localtable.txt distable.txt
@@ -32,7 +36,9 @@ echo "select create_table_query||';'  from system.tables where database != 'syst
 执行分布式表的ddl
 ./runcmd.sh ckip.txt "/data/clickhouse/bin/clickhouse-client  --password xxx -mn < /home/jinyaqia/ck_tool/distable.txt"
 ```
+
 其中
+
 ```
 # sendfile.sh
 # 用于发送文件
@@ -60,6 +66,7 @@ done
 wait
 echo 'done'
 ```
+
 ```
 # runcmd.sh
 # 用于执行命令
@@ -88,6 +95,7 @@ wait
 echo "select database||'.'||name,engine_full  from system.tables where database != 'system' and engine not in ('Distributed','View','MaterializedView')  order by name desc" | /data/clickhouse/bin/clickhouse-client --password xxx --port 9000 > dbtable.txt.all
 
 ```
+
 导出的文件去掉.inner.的表，物化视图等普通本地表导完后再处理
 如果有转义的,如'\，手工替换掉就可以了
 
@@ -108,11 +116,13 @@ zk.xml  复制工具zk配置
 ```
 
 3. 执行复制
+
 ```
 nohup python3 table_copy_copier.py 2>&1 >copy.log &
 ```
 
 4. 校对、检查和重跑
+
 ```
 批量校对
 python3 table_check.py
@@ -141,7 +151,8 @@ python3 get_error.py
 
 # 附录：
 ## table_copy_copier.py
-```
+
+```python
 import sys,json;
 import socket;
 import os;
@@ -249,7 +260,6 @@ if __name__ == '__main__':
         write_file(task_file,content)
         task = pool.submit(exec_command, result_file, dbtable[0],dbtable[1], command_template, remoteIp, task_file).add_done_callback(functools.partial(task_done_callback,dbtable_str=com))
         
-
 ```
 
 ## table_check.py
