@@ -1,7 +1,5 @@
 # clickhouse的一些原理和实践
 
-{:toc}
-* TOC
 ## 安装运维
 
 - [源码编译](build.md)

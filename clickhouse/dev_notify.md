@@ -1,7 +1,8 @@
 # ck集群运维注意事项
 
 {:toc}
-* TOC
+
+TOC
 
 1. alter时，只需要在一个分片上执行即可
 2. 遇到zookeeper session expire删除不了表，可以先detach再attach
