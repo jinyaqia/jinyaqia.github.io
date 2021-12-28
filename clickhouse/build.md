@@ -1,9 +1,11 @@
-{:toc}
+# clickhouse源码构建
 
-# ck源码构建
+{:toc}
+* TOC
+
+
 - 官方文档：https://clickhouse.com/docs/en/development/build/
 - 源码分支 21.12
-
 - 环境依赖
   - ubuntu: 16.04
   - cmake: 3.20.6

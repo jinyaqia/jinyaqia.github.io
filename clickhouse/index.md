@@ -1,7 +1,6 @@
 # clickhouse的一些原理和实践
 
 
-
 ## 安装运维
 
 - [源码编译](build.md)
