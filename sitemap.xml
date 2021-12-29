@@ -2,16 +2,44 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://jinyaqia.github.io.com/categories/clickhouse.html</loc>
+    <loc>https://jinyaqia.github.io.com/clickhouse/optimize-unionall/</loc>
     
-    <lastmod>2021-12-29T02:00:17.886Z</lastmod>
+    <lastmod>2021-12-29T02:53:46.387Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://jinyaqia.github.io.com/build/</loc>
+    <loc>https://jinyaqia.github.io.com/clickhouse/qianyi/</loc>
     
-    <lastmod>2021-12-29T01:56:40.942Z</lastmod>
+    <lastmod>2021-12-29T02:53:03.109Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://jinyaqia.github.io.com/clickhouse/install/</loc>
+    
+    <lastmod>2021-12-29T02:51:41.981Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://jinyaqia.github.io.com/clickhouse/dev_notify/</loc>
+    
+    <lastmod>2021-12-29T02:51:12.302Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://jinyaqia.github.io.com/clickhouse/build/</loc>
+    
+    <lastmod>2021-12-29T02:50:01.097Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://jinyaqia.github.io.com/categories/clickhouse.html</loc>
+    
+    <lastmod>2021-12-29T02:00:17.886Z</lastmod>
     
   </url>
   
@@ -72,14 +100,14 @@
   </url>
   
   <url>
-    <loc>https://jinyaqia.github.io.com/docs/tag-plugins/caniuse.html</loc>
+    <loc>https://jinyaqia.github.io.com/docs/tag-plugins/button.html</loc>
     
     <lastmod>2021-12-28T12:41:34.606Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://jinyaqia.github.io.com/docs/tag-plugins/button.html</loc>
+    <loc>https://jinyaqia.github.io.com/docs/tag-plugins/caniuse.html</loc>
     
     <lastmod>2021-12-28T12:41:34.606Z</lastmod>
     
@@ -128,6 +156,13 @@
   </url>
   
   <url>
+    <loc>https://jinyaqia.github.io.com/docs/getting-started/configuration.html</loc>
+    
+    <lastmod>2021-12-28T12:41:34.603Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://jinyaqia.github.io.com/docs/getting-started/deployment.html</loc>
     
     <lastmod>2021-12-28T12:41:34.603Z</lastmod>
@@ -136,13 +171,6 @@
   
   <url>
     <loc>https://jinyaqia.github.io.com/docs/getting-started/index.html</loc>
-    
-    <lastmod>2021-12-28T12:41:34.603Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jinyaqia.github.io.com/docs/getting-started/configuration.html</loc>
     
     <lastmod>2021-12-28T12:41:34.603Z</lastmod>
     
@@ -296,6 +324,13 @@
   </url>
   
   <url>
+    <loc>https://jinyaqia.github.io.com/plugins/index.html</loc>
+    
+    <lastmod>2021-12-28T12:41:34.593Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://jinyaqia.github.io.com/docs/troubleshooting.html</loc>
     
     <lastmod>2021-12-28T12:41:34.593Z</lastmod>
@@ -303,9 +338,9 @@
   </url>
   
   <url>
-    <loc>https://jinyaqia.github.io.com/plugins/index.html</loc>
+    <loc>https://jinyaqia.github.io.com/flink/remote-debug/</loc>
     
-    <lastmod>2021-12-28T12:41:34.593Z</lastmod>
+    <lastmod>2021-12-28T10:36:56.677Z</lastmod>
     
   </url>
   
