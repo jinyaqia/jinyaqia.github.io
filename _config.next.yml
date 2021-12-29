@@ -1,0 +1,316 @@
+#################################################################
+###################### NexT Configuration #######################
+#################################################################
+
+# ============================================================= #
+# ============= Theme Core Configuration Settings ============= #
+# ============================================================= #
+
+custom_file_path:
+  sidebar: source/_data/sidebar.njk
+  footer: source/_data/footer.njk
+  variable: source/_data/variables.styl
+  style: source/_data/styles.styl
+
+
+# ============================================================= #
+# ====================== Scheme Settings ====================== #
+# ============================================================= #
+
+# scheme: Muse
+scheme: Mist
+#scheme: Pisces
+# scheme: Gemini
+
+darkmode: false
+
+
+# ============================================================= #
+# ================= Site Information Settings ================= #
+# ============================================================= #
+
+
+creative_commons:
+  license: zero       # License类型： by | by-nc | by-nc-nd | by-nc-sa | by-nd | by-sa | zero
+  sidebar: false          # 在侧边栏有一个版权的图片链接
+  post: true              # 在每一篇文章末尾自动增加本文作者、本文链接、版权声明信息
+  language: deed.zh       # 点击链接后显示的版权信息的语言
+
+
+# ============================================================= #
+# ======================= Menu Settings ======================= #
+# ============================================================= #
+
+menu:
+  home: / || fa fa-bell
+
+  # Docs:
+  #   default: /docs/ || fa fa-book
+
+  #   Getting Started:
+  #     default: /getting-started/ || fa fa-flag
+  #     Installation: /installation.html || fa fa-download
+  #     Deployment: /deployment.html || fa fa-upload
+  #     Configuration: /configuration.html || fa fa-wrench
+  #     Upgrade: /upgrade.html || fa fa-history
+
+  #   Theme Settings:
+  #     default: /theme-settings/ || fa fa-star
+  #     Sidebar: /sidebar.html || fa fa-bars
+  #     Footer: /footer.html || fa fa-sticky-note
+  #     Posts: /posts.html || fa fa-paragraph
+  #     Custom Pages: /custom-pages.html || fa fa-swatchbook
+  #     Miscellaneous: /miscellaneous.html || fa fa-university
+  #     SEO: /seo.html || fa fa-external-link-square-alt
+  #     i18n: /internationalization.html || fa fa-globe-asia
+
+  tags: /tags/ || fa fa-tags
+  categories: /categories/ || fa fa-th
+
+    # Third Party Services:
+    #   default: /third-party-services/ || fa fa-puzzle-piece
+    #   Math Equations: /math-equations.html || fa fa-square-root-alt
+    #   Comment Systems: /comments.html || fa fa-comment-alt
+    #   Post Widgets: /post-widgets.html || fa fa-gift
+    #   Statistics and Analytics: /statistics-and-analytics.html || fa fa-chart-pie
+    #   Search Services: /search-services.html || fab fa-algolia
+    #   Chat Services: /chat-services.html || fa fa-comments
+    #   External Libraries: /external-libraries.html || fa fa-lightbulb
+
+    # Tag Plugins:
+    #   default: /tag-plugins/ || fa fa-rocket
+    #   Button: /button.html || fa fa-cube
+    #   Caniuse: /caniuse.html || fa fa-signal
+    #   Group Pictures: /group-pictures.html || fa fa-images
+    #   Label: /label.html || fa fa-hat-wizard
+    #   Link Grid: /link-grid.html || fa fa-grip-vertical
+    #   Mermaid: /mermaid.html || fa fa-project-diagram
+    #   Note: /note.html || fa fa-adjust
+    #   PDF: /pdf.html || fa fa-file-pdf
+    #   Tabs: /tabs.html || fa fa-columns
+
+    # Advanced Settings:
+    #   default: /advanced-settings/ || fa fa-cog
+    #   Vendors: /vendors.html || fa fa-plug
+    #   Custom Files: /custom-files.html || fa fa-palette
+    #   Injects: injects.html || fa fa-layer-group
+    #   Front Matter: /front-matter.html || fa fa-edit
+
+    # Troubleshooting: /troubleshooting.html || fa fa-life-ring
+
+  archives: /archives/ || fa fa-archive
+  # sitemap: /sitemap.xml || fa fa-sitemap
+  # commonweal: /404/ || fa fa-heartbeat
+
+menu_settings:
+  icons: true
+  badges: true
+
+
+# ============================================================= #
+# ===================== Sidebar Settings ====================== #
+# ============================================================= #
+
+sidebar:
+  position: left
+  display: post  # post|always|hide|remove
+  padding: 18
+  offset: 12
+
+avatar:
+  url: /images/logo.png
+  rounded: true
+
+social:
+  GitHub: https://github.com/jinyaqia || fab fa-github
+  # RSS: /atom.xml || fa fa-rss
+
+social_icons:
+  enable: false
+  icons_only: true
+  transition: true
+
+
+toc:
+  enable: true
+  number: true           # 自动添加目录编号
+  wrap: true              # 每行目录字数超长自动换行
+  expand_all: true        # 展开所有级别
+  max_depth: 5            # 目录的最大深度
+
+
+# ============================================================= #
+# ====================== Footer Settings ====================== #
+# ============================================================= #
+
+footer:
+  since: 2014
+  icon:
+    name: fa fa-heart
+    animated: true
+    color: "#808080"
+  copyright: 
+
+
+# ============================================================= #
+# ======================= Post Settings ======================= #
+# ============================================================= #
+
+post_meta:
+  updated_at:
+    enable: true
+
+symbols_count_time:
+  separated_meta: false         # 是否另起一行显示（即不和发表时间等同一行显示）
+  item_text_post: true          # 首页文章统计数量前是否显示文字描述（本文字数、阅读时长）
+  item_text_total: true        # 页面底部统计数量前是否显示文字描述（站点总字数、站点阅读时长）
+
+post_edit:
+  enable: false
+  url: https://github.com/next-theme/theme-next-docs/edit/master/source/
+
+
+# ============================================================= #
+# ==================== Misc Theme Settings ==================== #
+# ============================================================= #
+
+mobile_layout_economy: true
+
+codeblock:
+  theme:
+    light: default
+    dark: tomorrow-night
+  copy_button:
+    enable: true
+    style: default
+
+back2top:
+  enable: true
+  sidebar: true
+  scrollpercent: true
+
+github_banner:
+  enable: false
+  permalink: https://github.com/jinyaqia
+  title: 我的github
+
+font:
+  enable: false
+  host: //fonts.loli.net
+  codes:
+    external: true
+    family: Inconsolata
+
+
+# ============================================================= #
+# ======================= SEO Settings ======================== #
+# ============================================================= #
+
+index_with_subtitle: true
+
+exturl: true
+
+google_site_verification: 5AUIVYTbHIAuz-eQtxSfZbWW5eg9_EVZMSQycIuXrG0
+
+
+# ============================================================= #
+# =============== Third Party Services Settings =============== #
+# ============================================================= #
+
+math:
+  mathjax:
+    enable: true
+    tags: ams
+
+pjax: true
+
+mediumzoom: true
+
+
+# ============================================================= #
+# =================== Comments and Widgets ==================== #
+# ============================================================= #
+
+comments:
+  lazyload: true
+
+disqus:
+  enable: false
+  shortname: next-theme
+  count: true
+
+
+# ============================================================= #
+# ================= Statistics and Analytics ================== #
+# ============================================================= #
+
+google_analytics:
+  tracking_id: UA-108155018-3
+
+
+# ============================================================= #
+# ====================== Search Services ====================== #
+# ============================================================= #
+
+local_search:
+  enable: true
+  trigger: auto
+  top_n_per_article: 1
+
+
+# ============================================================= #
+# ======================= Chat Services ======================= #
+# ============================================================= #
+
+gitter:
+  enable: false
+  room: hexo-next/community
+
+
+# ============================================================= #
+# ======================== Tag Plugins ======================== #
+# ============================================================= #
+
+note:
+  style: simple
+  icons: true
+  light_bg_offset: -3
+
+tabs:
+  transition:
+    tabs: true
+    labels: true
+
+mermaid:
+  enable: true
+
+
+# ============================================================= #
+# ==================== External Libraries ===================== #
+# ============================================================= #
+
+motion:
+  async: true
+
+vendors:
+  internal: jsdelivr
+
+
+busuanzi_count:
+  enable: true
+  total_visitors: true
+  total_visitors_icon: fa fa-user
+  total_views: true
+  total_views_icon: fa fa-eye
+  post_views: true
+  post_views_icon: fa fa-eye
+
+excerpt_description: false
+
+# Reading progress bar
+reading_progress:
+  enable: true
+  # Available values: top | bottom
+  position: top
+  color: '#37c6c0'
+  height: 3px
