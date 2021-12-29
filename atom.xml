@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>洽洽的博客</title>
+  
+  
+  <link href="https://jinyaqia.github.io.com/atom.xml" rel="self"/>
+  
+  <link href="https://jinyaqia.github.io.com/"/>
+  <updated>2021-12-29T01:56:40.942Z</updated>
+  <id>https://jinyaqia.github.io.com/</id>
+  
+  <author>
+    <name>John Doe</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>clickhouse源码构建</title>
+    <link href="https://jinyaqia.github.io.com/build/"/>
+    <id>https://jinyaqia.github.io.com/build/</id>
+    <published>2021-12-15T23:43:57.000Z</published>
+    <updated>2021-12-29T01:56:40.942Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="clickhouse源码构建"><a href="#clickhouse源码构建" class="headerlink" title="clickhouse源码构建"></a>clickhouse源码构建</h1><p>{:toc}</p><ul><li>TOC</li></ul><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><ul><li>官方文档：<span class="exturl" data-url="aHR0cHM6Ly9jbGlja2hvdXNlLmNvbS9kb2NzL2VuL2RldmVsb3BtZW50L2J1aWxkLw==">https://clickhouse.com/docs/en/development/build/<i class="fa fa-external-link-alt"></i></span></li><li>源码分支 21.12</li><li>环境依赖<ul><li>ubuntu: 16.04</li><li>cmake: 3.20.6</li><li>clang: clang-13</li></ul></li></ul><span id="more"></span><h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><ul><li><p>准备源码: </p><p>clickhouse官方库为：<span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL0NsaWNrSG91c2UvQ2xpY2tIb3VzZQ==">https://github.com/ClickHouse/ClickHouse<i class="fa fa-external-link-alt"></i></span></p><p><code>git clone -b 21.12 https://github.com/ClickHouse/ClickHouse.git</code>，可切换到其他具体的分支</p></li><li><p>执行git submodule更新相关的依赖包，依赖包会下载到``ClickHouse/contrib`下</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git submodule sync</span><br><span class="line"><span class="meta">#</span><span class="bash"> 初始化并下载相关依赖</span></span><br><span class="line">git submodule update --init --recursive </span><br></pre></td></tr></table></figure></li><li><p>编译环境下载相关的依赖，如cmake，clang等</p></li><li><p>将下面脚本<code>build.sh</code>放在ClickhouseHouse目录下，执行<code>bash build.sh</code></p><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">mkdir build-clang</span><br><span class="line">cd build-clang</span><br><span class="line"></span><br><span class="line">je=<span class="number">1</span></span><br><span class="line">tc=<span class="number">1</span></span><br><span class="line">BT=Release</span><br><span class="line"><span class="comment">#BT=Debug</span></span><br><span class="line"></span><br><span class="line">export TMPDIR=<span class="regexp">/data/</span>tmp</span><br><span class="line"><span class="regexp">/opt/</span>cmake-<span class="number">3.20</span>.<span class="number">6</span>-linux-x86_64<span class="regexp">/bin/</span>cmake .. -DENABLE_JEMALLOC=<span class="variable">$&#123;je&#125;</span>  -DENABLE_TCMALLOC=<span class="variable">$&#123;tc&#125;</span> -DCMAKE_EXPORT_COMPILE_COMMANDS=<span class="number">1</span>  -DENABLE_TESTS=OFF  -DCMAKE_BUILD_TYPE=<span class="variable">$&#123;BT&#125;</span> -DENABLE_RDKAFKA=<span class="number">0</span> -DCMAKE_CXX_COMPILER=`which clang++-<span class="number">13</span>` -DCMAKE_C_COMPILER=`which clang-<span class="number">13</span>`</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ $? -ne <span class="number">0</span> ]; then</span><br><span class="line">  echo <span class="string">&quot;cmake faild&quot;</span></span><br><span class="line">  <span class="keyword">exit</span> <span class="number">1</span></span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">ninja -j20</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ $? -ne <span class="number">0</span> ]; then</span><br><span class="line">  echo <span class="string">&quot;faild&quot;</span></span><br><span class="line">  <span class="keyword">exit</span> <span class="number">1</span></span><br><span class="line">fi</span><br></pre></td></tr></table></figure></li><li><p>编译完可执行文件在<code>build-clang/programs下</code></p><figure class="highlight xl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="keyword">tree</span> -L <span class="number">1</span> programs</span><br><span class="line">programs</span><br><span class="line">├── bash-completion</span><br><span class="line">├── benchmark</span><br><span class="line">├── clickhouse</span><br><span class="line">├── <span class="function"><span class="title">clickhouse</span>-benchmark -&gt;</span> clickhouse</span><br><span class="line">├── <span class="function"><span class="title">clickhouse</span>-client -&gt;</span> clickhouse</span><br><span class="line">├── <span class="function"><span class="title">clickhouse</span>-compressor -&gt;</span> clickhouse</span><br><span class="line">├── <span class="function"><span class="title">clickhouse</span>-copier -&gt;</span> clickhouse</span><br><span class="line">├── <span class="function"><span class="title">clickhouse</span>-extract-from-config -&gt;</span> clickhouse</span><br><span class="line">├── <span class="function"><span class="title">clickhouse</span>-format -&gt;</span> clickhouse</span><br><span class="line">├── <span class="function"><span class="title">clickhouse</span>-git-<span class="keyword">import</span> -&gt;</span> clickhouse</span><br><span class="line">├── <span class="function"><span class="title">clickhouse</span>-keeper -&gt;</span> clickhouse</span><br><span class="line">├── <span class="function"><span class="title">clickhouse</span>-keeper-converter -&gt;</span> clickhouse</span><br><span class="line">├── clickhouse-library-bridge</span><br><span class="line">├── <span class="function"><span class="title">clickhouse</span>-local -&gt;</span> clickhouse</span><br><span class="line">├── <span class="function"><span class="title">clickhouse</span>-obfuscator -&gt;</span> clickhouse</span><br><span class="line">├── clickhouse-odbc-bridge</span><br><span class="line">├── <span class="function"><span class="title">clickhouse</span>-server -&gt;</span> clickhouse</span><br><span class="line">├── <span class="function"><span class="title">clickhouse</span>-static-files-disk-uploader -&gt;</span> clickhouse</span><br><span class="line">├── client</span><br><span class="line">├── CMakeFiles</span><br><span class="line">├── cmake_install.cmake</span><br><span class="line">├── compressor</span><br><span class="line">├── copier</span><br><span class="line">├── CTestTestfile.cmake</span><br><span class="line">├── extract-from-config</span><br><span class="line">├── format</span><br><span class="line">├── git-<span class="keyword">import</span></span><br><span class="line">├── install</span><br><span class="line">├── keeper</span><br><span class="line">├── keeper-converter</span><br><span class="line">├── library-bridge</span><br><span class="line">├── local</span><br><span class="line">├── obfuscator</span><br><span class="line">├── odbc-bridge</span><br><span class="line">├── server</span><br><span class="line">└── static-files-disk-uploader</span><br></pre></td></tr></table></figure></li></ul><h2 id="碰到的问题"><a href="#碰到的问题" class="headerlink" title="碰到的问题"></a>碰到的问题</h2><p>各种包依赖，这个时候看报错日志，把相关依赖解决就行</p>]]></content>
+    
+    
+    <summary type="html">&lt;h1 id=&quot;clickhouse源码构建&quot;&gt;&lt;a href=&quot;#clickhouse源码构建&quot; class=&quot;headerlink&quot; title=&quot;clickhouse源码构建&quot;&gt;&lt;/a&gt;clickhouse源码构建&lt;/h1&gt;&lt;p&gt;{:toc}&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;TOC&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;概述&quot;&gt;&lt;a href=&quot;#概述&quot; class=&quot;headerlink&quot; title=&quot;概述&quot;&gt;&lt;/a&gt;概述&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;官方文档：&lt;span class=&quot;exturl&quot; data-url=&quot;aHR0cHM6Ly9jbGlja2hvdXNlLmNvbS9kb2NzL2VuL2RldmVsb3BtZW50L2J1aWxkLw==&quot;&gt;https://clickhouse.com/docs/en/development/build/&lt;i class=&quot;fa fa-external-link-alt&quot;&gt;&lt;/i&gt;&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;源码分支 21.12&lt;/li&gt;
+&lt;li&gt;环境依赖&lt;ul&gt;
+&lt;li&gt;ubuntu: 16.04&lt;/li&gt;
+&lt;li&gt;cmake: 3.20.6&lt;/li&gt;
+&lt;li&gt;clang: clang-13&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;</summary>
+    
+    
+    
+    <category term="clickhouse" scheme="https://jinyaqia.github.io.com/categories/clickhouse/"/>
+    
+    <category term="源码" scheme="https://jinyaqia.github.io.com/categories/clickhouse/%E6%BA%90%E7%A0%81/"/>
+    
+    
+    <category term="clickhouse" scheme="https://jinyaqia.github.io.com/tags/clickhouse/"/>
+    
+  </entry>
+  
+</feed>
