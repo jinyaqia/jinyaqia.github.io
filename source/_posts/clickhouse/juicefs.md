@@ -1,6 +1,6 @@
 ---
 title: clickhouse+JuiceFS冷热数据分层+读写分离的方案
-date: 2021-01-01 09:43:57
+date: 2022-01-01 09:43:57
 tags: clickhouse
 categories: 
 - clickhouse

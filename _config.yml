@@ -4,6 +4,8 @@
 
 # Site
 title: 洽洽的博客
+subtitle: ''
+description: ''
 keywords: "big data"
 language: zh-CN
 timezone: Asia/Shanghai
@@ -44,9 +46,18 @@ highlight:
   line_number: true
   auto_detect: true
   tab_replace: ''
+  wrap: true
+  hljs: false
+prismjs:
+  enable: false
+  preprocess: true
+  line_number: true
+  tab_replace: ''
+
 
 # Home page setting
 index_generator:
+  path: ''
   per_page: 20
   order_by: date
 
@@ -55,12 +66,18 @@ default_category: uncategorized
 category_map:
 tag_map:
 
+# Metadata elements
+## https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta
+meta_generator: true
+
 # Date / Time format
 date_format: YYYY-MM-DD
 time_format: HH:mm:ss
+## updated_option supports 'mtime', 'date', 'empty'
+updated_option: 'mtime'
 
 # Pagination
-per_page: 10
+per_page: 20
 pagination_dir: page
 
 # Extensions
@@ -70,7 +87,17 @@ archive_generator:
   per_page: 20
   yearly: true
   monthly: true
-  daily: true
+  daily: false
+
+category_generator:
+  per_page: 20
+  order_by: date
+  category_generator: true
+
+tag_generator:
+  per_page: 20
+  order_by: date
+  tag_generator: true
 
 marked:
   # For preserve original quotes in code blocks.
