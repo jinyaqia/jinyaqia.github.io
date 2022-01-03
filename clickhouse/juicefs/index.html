@@ -22,32 +22,34 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"jinyaqia.github.io.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.8.2","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="https://cdn.jsdelivr.net/npm/hexo-theme-next@8.8.2/source/js/config.min.js"></script>
-<meta name="description" content="clickhouse+JuiceFS冷热数据分层存储方案JuiceFS简介juiceFS的介绍可以参考juiceFS github JuiceFS 是在 GNU Affero General Public License v3.0 下发布的高性能 POSIX 文件系统。它专门针对云原生环境进行了优化。使用 JuiceFS 存储数据，数据本身会持久化到对象存储（如 S3、oss）中，数据对应的元数据">
+<meta name="description" content="clickhouse+JuiceFS冷热数据分层+读写分离的方案JuiceFS简介juiceFS的介绍可以参考juiceFS github JuiceFS 是在 GNU Affero General Public License v3.0 下发布的高性能 POSIX 文件系统。它专门针对云原生环境进行了优化。使用 JuiceFS 存储数据，数据本身会持久化到对象存储（如 S3、oss）中，数据对应">
 <meta property="og:type" content="article">
-<meta property="og:title" content="clickhouse+JuiceFS冷热数据分层方案">
+<meta property="og:title" content="clickhouse+JuiceFS冷热数据分层+读写分离的方案">
 <meta property="og:url" content="https://jinyaqia.github.io.com/clickhouse/juicefs/index.html">
 <meta property="og:site_name" content="洽洽的博客">
-<meta property="og:description" content="clickhouse+JuiceFS冷热数据分层存储方案JuiceFS简介juiceFS的介绍可以参考juiceFS github JuiceFS 是在 GNU Affero General Public License v3.0 下发布的高性能 POSIX 文件系统。它专门针对云原生环境进行了优化。使用 JuiceFS 存储数据，数据本身会持久化到对象存储（如 S3、oss）中，数据对应的元数据">
+<meta property="og:description" content="clickhouse+JuiceFS冷热数据分层+读写分离的方案JuiceFS简介juiceFS的介绍可以参考juiceFS github JuiceFS 是在 GNU Affero General Public License v3.0 下发布的高性能 POSIX 文件系统。它专门针对云原生环境进行了优化。使用 JuiceFS 存储数据，数据本身会持久化到对象存储（如 S3、oss）中，数据对应">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://jinyaqia.github.io.com/images/clickhouse/juicefs-4.png">
 <meta property="og:image" content="https://jinyaqia.github.io.com/images/clickhouse/juicefs-1.png">
 <meta property="og:image" content="https://jinyaqia.github.io.com/images/clickhouse/juicefs-2.png">
 <meta property="og:image" content="https://jinyaqia.github.io.com/images/clickhouse/juicefs-3.png">
+<meta property="og:image" content="https://jinyaqia.github.io.com/images/clickhouse/juicefs-5.png">
 <meta property="article:published_time" content="2021-01-01T01:43:57.000Z">
-<meta property="article:modified_time" content="2022-01-03T07:55:19.505Z">
+<meta property="article:modified_time" content="2022-01-03T09:13:47.892Z">
 <meta property="article:author" content="John Doe">
-<meta property="article:tag" content="运维">
+<meta property="article:tag" content="clickhouse">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://jinyaqia.github.io.com/images/clickhouse/juicefs-1.png">
+<meta name="twitter:image" content="https://jinyaqia.github.io.com/images/clickhouse/juicefs-4.png">
 
 
 <link rel="canonical" href="https://jinyaqia.github.io.com/clickhouse/juicefs/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://jinyaqia.github.io.com/clickhouse/juicefs/","path":"clickhouse/juicefs/","title":"clickhouse+JuiceFS冷热数据分层方案"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://jinyaqia.github.io.com/clickhouse/juicefs/","path":"clickhouse/juicefs/","title":"clickhouse+JuiceFS冷热数据分层+读写分离的方案"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>clickhouse+JuiceFS冷热数据分层方案 | 洽洽的博客</title>
+<title>clickhouse+JuiceFS冷热数据分层+读写分离的方案 | 洽洽的博客</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-108155018-3"></script>
   <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-108155018-3","only_pageview":false}</script>
@@ -97,7 +99,7 @@
 <nav class="site-nav">
   <ul class="main-menu menu">
         <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-bell fa-fw"></i>首页</a></li>
-        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">3</span></a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">2</span></a></li>
         <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">1</span></a></li>
         <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">7</span></a></li>
       <li class="menu-item menu-item-search">
@@ -156,7 +158,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#clickhouse-JuiceFS%E5%86%B7%E7%83%AD%E6%95%B0%E6%8D%AE%E5%88%86%E5%B1%82%E5%AD%98%E5%82%A8%E6%96%B9%E6%A1%88"><span class="nav-number">1.</span> <span class="nav-text">clickhouse+JuiceFS冷热数据分层存储方案</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#JuiceFS%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">JuiceFS简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E5%95%A5%E4%BC%9A%E8%80%83%E8%99%91%E4%BD%BF%E7%94%A8JuiceFS"><span class="nav-number">1.2.</span> <span class="nav-text">为啥会考虑使用JuiceFS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%A1%88%E7%BB%86%E8%8A%82"><span class="nav-number">1.3.</span> <span class="nav-text">方案细节</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96JuiceFS"><span class="nav-number">1.3.1.</span> <span class="nav-text">初始化JuiceFS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mount-JuiceFS"><span class="nav-number">1.3.2.</span> <span class="nav-text">mount JuiceFS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AEclickhouse%E7%A3%81%E7%9B%98%E5%92%8C%E5%AD%98%E5%82%A8%E7%AD%96%E7%95%A5"><span class="nav-number">1.3.3.</span> <span class="nav-text">配置clickhouse磁盘和存储策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%BA%E8%A1%A8%E6%B5%8B%E8%AF%95"><span class="nav-number">1.3.4.</span> <span class="nav-text">建表测试</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BB%BA%E8%A1%A8"><span class="nav-number">1.3.4.1.</span> <span class="nav-text">建表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8F%92%E5%85%A5%E6%95%B0%E6%8D%AE"><span class="nav-number">1.3.4.2.</span> <span class="nav-text">插入数据</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#clickhouse-JuiceFS%E5%86%B7%E7%83%AD%E6%95%B0%E6%8D%AE%E5%88%86%E5%B1%82-%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB%E7%9A%84%E6%96%B9%E6%A1%88"><span class="nav-number">1.</span> <span class="nav-text">clickhouse+JuiceFS冷热数据分层+读写分离的方案</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#JuiceFS%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">JuiceFS简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E5%95%A5%E4%BC%9A%E8%80%83%E8%99%91%E4%BD%BF%E7%94%A8JuiceFS"><span class="nav-number">1.2.</span> <span class="nav-text">为啥会考虑使用JuiceFS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%A1%88%E7%BB%86%E8%8A%82"><span class="nav-number">1.3.</span> <span class="nav-text">方案细节</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96JuiceFS"><span class="nav-number">1.3.1.</span> <span class="nav-text">初始化JuiceFS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mount-JuiceFS"><span class="nav-number">1.3.2.</span> <span class="nav-text">mount JuiceFS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AEclickhouse%E7%A3%81%E7%9B%98%E5%92%8C%E5%AD%98%E5%82%A8%E7%AD%96%E7%95%A5"><span class="nav-number">1.3.3.</span> <span class="nav-text">配置clickhouse磁盘和存储策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%BA%E8%A1%A8%E6%B5%8B%E8%AF%95"><span class="nav-number">1.3.4.</span> <span class="nav-text">建表测试</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BB%BA%E8%A1%A8"><span class="nav-number">1.3.4.1.</span> <span class="nav-text">建表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8F%92%E5%85%A5%E6%95%B0%E6%8D%AE"><span class="nav-number">1.3.4.2.</span> <span class="nav-text">插入数据</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E7%A7%8D%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB%E7%9A%84%E6%80%9D%E8%B7%AF"><span class="nav-number">1.4.</span> <span class="nav-text">一种读写分离的思路</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">1.5.</span> <span class="nav-text">参考</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -176,12 +178,14 @@
         </a>
       </div>
       <div class="site-state-item site-state-categories">
+          <a href="/categories/">
         <span class="site-state-item-count">1</span>
-        <span class="site-state-item-name">分类</span>
+        <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">3</span>
-        <span class="site-state-item-name">标签</span>
+          <a href="/tags/">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
 </div>
@@ -242,7 +246,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          clickhouse+JuiceFS冷热数据分层方案
+          clickhouse+JuiceFS冷热数据分层+读写分离的方案
         </h1>
 
         <div class="post-meta-container">
@@ -260,7 +264,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2022-01-03 15:55:19" itemprop="dateModified" datetime="2022-01-03T15:55:19+08:00">2022-01-03</time>
+        <time title="修改时间：2022-01-03 17:13:47" itemprop="dateModified" datetime="2022-01-03T17:13:47+08:00">2022-01-03</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -285,7 +289,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>1.2k</span>
+      <span>1.6k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -303,7 +307,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="clickhouse-JuiceFS冷热数据分层存储方案"><a href="#clickhouse-JuiceFS冷热数据分层存储方案" class="headerlink" title="clickhouse+JuiceFS冷热数据分层存储方案"></a>clickhouse+JuiceFS冷热数据分层存储方案</h1><h2 id="JuiceFS简介"><a href="#JuiceFS简介" class="headerlink" title="JuiceFS简介"></a>JuiceFS简介</h2><p>juiceFS的介绍可以参考<span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2p1aWNlZGF0YS9qdWljZWZz">juiceFS github<i class="fa fa-external-link-alt"></i></span></p>
+        <h1 id="clickhouse-JuiceFS冷热数据分层-读写分离的方案"><a href="#clickhouse-JuiceFS冷热数据分层-读写分离的方案" class="headerlink" title="clickhouse+JuiceFS冷热数据分层+读写分离的方案"></a>clickhouse+JuiceFS冷热数据分层+读写分离的方案</h1><h2 id="JuiceFS简介"><a href="#JuiceFS简介" class="headerlink" title="JuiceFS简介"></a>JuiceFS简介</h2><p>juiceFS的介绍可以参考<span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2p1aWNlZGF0YS9qdWljZWZz">juiceFS github<i class="fa fa-external-link-alt"></i></span></p>
 <p>JuiceFS 是在 GNU Affero General Public License v3.0 下发布的高性能 POSIX 文件系统。它专门针对云原生环境进行了优化。使用 JuiceFS 存储数据，数据本身会持久化到对象存储（如 S3、oss）中，数据对应的元数据可以根据需要持久化到 Redis、MySQL、SQLite 等各种数据库引擎中。</p>
 <p>JuiceFS 可以简单方便地将海量云存储直接连接到大数据、机器学习、人工智能以及已经投入生产环境的各种应用平台，无需修改代码，您可以像使用本地存储一样高效地使用海量云存储。</p>
 <span id="more"></span>
@@ -318,6 +322,8 @@
 <h3 id="配置clickhouse磁盘和存储策略"><a href="#配置clickhouse磁盘和存储策略" class="headerlink" title="配置clickhouse磁盘和存储策略"></a>配置clickhouse磁盘和存储策略</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">clickhouse</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">storage_configuration</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">disks</span>&gt;</span>            </span><br><span class="line">            <span class="tag">&lt;<span class="name">default</span>&gt;</span></span><br><span class="line">             <span class="tag">&lt;<span class="name">keep_free_space_bytes</span>&gt;</span>1048576000<span class="tag">&lt;/<span class="name">keep_free_space_bytes</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">default</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">data2</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">path</span>&gt;</span>/data2/clickhouse/data/<span class="tag">&lt;/<span class="name">path</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">keep_free_space_bytes</span>&gt;</span>1048576000<span class="tag">&lt;/<span class="name">keep_free_space_bytes</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">data2</span>&gt;</span>   </span><br><span class="line">            <span class="tag">&lt;<span class="name">hdfs</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">path</span>&gt;</span>/mnt/jfshdfs/68/<span class="tag">&lt;/<span class="name">path</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">hdfs</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">disks</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">policies</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">default</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">volumes</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">cold</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">disk</span>&gt;</span>default<span class="tag">&lt;/<span class="name">disk</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">disk</span>&gt;</span>data2<span class="tag">&lt;/<span class="name">disk</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">cold</span>&gt;</span>            </span><br><span class="line">                <span class="tag">&lt;/<span class="name">volumes</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">move_factor</span>&gt;</span>0.2<span class="tag">&lt;/<span class="name">move_factor</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">default</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">cold</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">volumes</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">backup</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">disk</span>&gt;</span>hdfs<span class="tag">&lt;/<span class="name">disk</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">backup</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">volumes</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">cold</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">hot_cold</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">volumes</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">hot</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">disk</span>&gt;</span>default<span class="tag">&lt;/<span class="name">disk</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">disk</span>&gt;</span>data2<span class="tag">&lt;/<span class="name">disk</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">max_data_part_size_bytes</span>&gt;</span>104857600<span class="tag">&lt;/<span class="name">max_data_part_size_bytes</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">hot</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">cold</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">disk</span>&gt;</span>hdfs<span class="tag">&lt;/<span class="name">disk</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">cold</span>&gt;</span>                                    </span><br><span class="line">                <span class="tag">&lt;/<span class="name">volumes</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">move_factor</span>&gt;</span>0.2<span class="tag">&lt;/<span class="name">move_factor</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">hot_cold</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;/<span class="name">policies</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">storage_configuration</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">clickhouse</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
 <p>配置中定义了<code>hot_cold</code>策略，该策略中包含<code>hot</code>和<code>cold</code>两个磁盘卷，<code>hot</code>中指定的是两个本地磁盘，<code>cold</code>中指定的是JuiceFS远程共享文件系统，<code>max_data_part_size_bytes</code>表示可以存储在卷的任何磁盘上的部分的最大大小。如果合并部分的大小估计大于 max_data_part_size_bytes，则该部分将被写入下一个卷。基本上，此功能允许将新/小部件保留在热 (SSD) 卷上，并在它们达到大尺寸时将它们移至冷 (HDD) 卷。为了测试这里设置为100M<code>move_factor</code>配置表示当磁盘的容量超过 80% 时触发数据移动到 JuiceFS。</p>
+<p>重启clickhouse-server，查看存储策略是否生效</p>
+<p><img src="../../images/clickhouse/juicefs-4.png" alt="image-20220103164803141" loading="lazy"></p>
 <h3 id="建表测试"><a href="#建表测试" class="headerlink" title="建表测试"></a>建表测试</h3><h4 id="建表"><a href="#建表" class="headerlink" title="建表"></a>建表</h4><p>新建一张按天分区的表，默认的存储策略设置为<code>hot_cold</code>, 设置超过20天的数据<code>move</code>到<code>cold</code>磁盘卷中</p>
 <figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> TABLE default.t_report_yspwl_dm_transm_mk_info2_day</span><br><span class="line">(</span><br><span class="line">    <span class="symbol">`day`</span> Date DEFAULT toDate(its),</span><br><span class="line">    <span class="symbol">`its`</span> UInt32,</span><br><span class="line">    <span class="symbol">`appid`</span> Int32,</span><br><span class="line">    <span class="symbol">`line`</span> Int32,</span><br><span class="line">    <span class="symbol">`user_isp`</span> LowCardinality(<span class="keyword">String</span>),</span><br><span class="line">    <span class="symbol">`user_province`</span> LowCardinality(<span class="keyword">String</span>),</span><br><span class="line">    <span class="symbol">`cdnip`</span> LowCardinality(<span class="keyword">String</span>),</span><br><span class="line">    <span class="symbol">`networktype`</span> LowCardinality(<span class="keyword">String</span>),</span><br><span class="line">    <span class="symbol">`game_name`</span> LowCardinality(<span class="keyword">String</span>),</span><br><span class="line">    <span class="symbol">`p2p`</span> Int32,</span><br><span class="line">    <span class="symbol">`p2p_origin_type`</span> LowCardinality(<span class="keyword">String</span>),</span><br><span class="line">    <span class="symbol">`harddecode`</span> Int32,</span><br><span class="line">    <span class="symbol">`bad_cnt`</span> Int64,</span><br><span class="line">    <span class="symbol">`log_cnt`</span> Int64,</span><br><span class="line">    <span class="symbol">`tot_log_cnt`</span> Int64,</span><br><span class="line">    <span class="symbol">`repeat_times`</span> Int64,</span><br><span class="line">    <span class="symbol">`_cnt`</span> UInt32 DEFAULT <span class="keyword">CAST</span>(<span class="number">1</span>, <span class="string">&#x27;UInt32&#x27;</span>),</span><br><span class="line">    <span class="symbol">`peak_flag`</span> Int32</span><br><span class="line">)</span><br><span class="line">ENGINE = MergeTree</span><br><span class="line"><span class="keyword">PARTITION</span> <span class="keyword">BY</span> toYYYYMMDD(day)</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> its</span><br><span class="line">TTL day + toIntervalDay(<span class="number">20</span>) <span class="keyword">TO</span> VOLUME <span class="string">&#x27;cold&#x27;</span></span><br><span class="line">SETTINGS index_granularity = <span class="number">8192</span>, storage_policy = <span class="string">&#x27;hot_cold&#x27;</span></span><br></pre></td></tr></table></figure>
 
@@ -330,6 +336,11 @@
 <p><img src="../../images/clickhouse/juicefs-2.png" alt="image-20220103154047920" loading="lazy"></p>
 <p>查看目录文件</p>
 <p><img src="../../images/clickhouse/juicefs-3.png" alt="image-20220103154700397" loading="lazy"></p>
+<h2 id="一种读写分离的思路"><a href="#一种读写分离的思路" class="headerlink" title="一种读写分离的思路"></a>一种读写分离的思路</h2><p>采用JuiceFS存储clickhouse冷数据，可以有效的扩展clickhouse单节点磁盘不足的问题，同时由于JuiceFS的共享特性，可以引申出一种读写分离的架构，如下图所示。对于ck本地表<code>default.table1</code>，在离线场景下，可以从k8s上启动临时的ck server，将离线数据写入到对应表中，当分区的数据写完后，可以detach partition，然后将这个partition对应的目录move到正式集群对应的节点对应的目录中去，再在正式集群中attach进行使用。此做法在重跑大量历史数据时，可以大大减轻正式集群的节点写入压力。</p>
+<img src="../../images/clickhouse/juicefs-5.png" alt="企业微信截图_7f1369c4-b3e7-46c2-9bbd-87219e5dd8fe" style="zoom:30%;" />
+
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://juicefs.com/blog/cn/posts/clickhouse-disaggregated-storage-and-compute-practice/"><span class="exturl" data-url="aHR0cHM6Ly9qdWljZWZzLmNvbS9ibG9nL2NuL3Bvc3RzL2NsaWNraG91c2UtZGlzYWdncmVnYXRlZC1zdG9yYWdlLWFuZC1jb21wdXRlLXByYWN0aWNlLw==">ClickHouse 存算分离架构探索<i class="fa fa-external-link-alt"></i></span></a></p>
+<p><span class="exturl" data-url="aHR0cHM6Ly9tcC53ZWl4aW4ucXEuY29tL3MvZUVMY3cwdjJVOVVYYUhuZkFEajN0UQ==">Shopee ClickHouse 冷热数据分离存储架构与实践<i class="fa fa-external-link-alt"></i></span></p>
 
     </div>
 
@@ -347,7 +358,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://jinyaqia.github.io.com/clickhouse/juicefs/" title="clickhouse+JuiceFS冷热数据分层方案">https://jinyaqia.github.io.com/clickhouse/juicefs/</a>
+      <a href="https://jinyaqia.github.io.com/clickhouse/juicefs/" title="clickhouse+JuiceFS冷热数据分层+读写分离的方案">https://jinyaqia.github.io.com/clickhouse/juicefs/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LzQuMC9kZWVkLnpo"><i class="fab fa-fw fa-creative-commons"></i>BY</span> 许可协议。转载请注明出处！
@@ -356,7 +367,7 @@
 </div>
 
           <div class="post-tags">
-              <a href="/tags/%E8%BF%90%E7%BB%B4/" rel="tag"># 运维</a>
+              <a href="/tags/clickhouse/" rel="tag"># clickhouse</a>
           </div>
 
         
@@ -365,8 +376,8 @@
             <div class="post-nav-item">
             </div>
             <div class="post-nav-item">
-                <a href="/clickhouse/optimize-unionall/" rel="next" title="union all并行查询提速">
-                  union all并行查询提速 <i class="fa fa-chevron-right"></i>
+                <a href="/clickhouse/qianyi/" rel="next" title="clickhouse集群迁移实践">
+                  clickhouse集群迁移实践 <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>
