@@ -2,20 +2,6 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://jinyaqia.github.io.com/categories/index.html</loc>
-    
-    <lastmod>2022-01-03T12:28:29.246Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jinyaqia.github.io.com/tags/index.html</loc>
-    
-    <lastmod>2022-01-03T12:28:22.864Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://jinyaqia.github.io.com/clickhouse/juicefs/</loc>
     
     <lastmod>2022-01-03T09:13:47.892Z</lastmod>
