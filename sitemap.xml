@@ -2,6 +2,27 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://jinyaqia.github.io.com/categories/index.html</loc>
+    
+    <lastmod>2022-01-03T10:08:42.444Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://jinyaqia.github.io.com/tags/index.html</loc>
+    
+    <lastmod>2022-01-03T10:08:36.353Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://jinyaqia.github.io.com/test-md/</loc>
+    
+    <lastmod>2022-01-03T10:04:30.752Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://jinyaqia.github.io.com/clickhouse/juicefs/</loc>
     
     <lastmod>2022-01-03T09:13:47.892Z</lastmod>
@@ -37,20 +58,6 @@
   </url>
   
   <url>
-    <loc>https://jinyaqia.github.io.com/tags/index.html</loc>
-    
-    <lastmod>2022-01-03T08:23:03.180Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jinyaqia.github.io.com/categories/index.html</loc>
-    
-    <lastmod>2022-01-03T08:22:32.628Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://jinyaqia.github.io.com/clickhouse/optimize-unionall/</loc>
     
     <lastmod>2021-12-29T02:53:46.387Z</lastmod>
@@ -65,273 +72,7 @@
   </url>
   
   <url>
-    <loc>https://jinyaqia.github.io.com/docs/tag-plugins/mermaid.html</loc>
-    
-    <lastmod>2021-12-28T12:41:34.608Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jinyaqia.github.io.com/docs/tag-plugins/pdf.html</loc>
-    
-    <lastmod>2021-12-28T12:41:34.608Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jinyaqia.github.io.com/docs/tag-plugins/index.html</loc>
-    
-    <lastmod>2021-12-28T12:41:34.607Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jinyaqia.github.io.com/docs/tag-plugins/link-grid.html</loc>
-    
-    <lastmod>2021-12-28T12:41:34.607Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jinyaqia.github.io.com/docs/tag-plugins/tabs.html</loc>
-    
-    <lastmod>2021-12-28T12:41:34.607Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jinyaqia.github.io.com/docs/tag-plugins/button.html</loc>
-    
-    <lastmod>2021-12-28T12:41:34.606Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jinyaqia.github.io.com/docs/tag-plugins/caniuse.html</loc>
-    
-    <lastmod>2021-12-28T12:41:34.606Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jinyaqia.github.io.com/docs/tag-plugins/note.html</loc>
-    
-    <lastmod>2021-12-28T12:41:34.606Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jinyaqia.github.io.com/docs/tag-plugins/group-pictures.html</loc>
-    
-    <lastmod>2021-12-28T12:41:34.605Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jinyaqia.github.io.com/docs/tag-plugins/label.html</loc>
-    
-    <lastmod>2021-12-28T12:41:34.605Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jinyaqia.github.io.com/docs/index.html</loc>
-    
-    <lastmod>2021-12-28T12:41:34.604Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jinyaqia.github.io.com/docs/getting-started/installation.html</loc>
-    
-    <lastmod>2021-12-28T12:41:34.604Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jinyaqia.github.io.com/docs/getting-started/upgrade.html</loc>
-    
-    <lastmod>2021-12-28T12:41:34.604Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jinyaqia.github.io.com/docs/getting-started/configuration.html</loc>
-    
-    <lastmod>2021-12-28T12:41:34.603Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jinyaqia.github.io.com/docs/getting-started/index.html</loc>
-    
-    <lastmod>2021-12-28T12:41:34.603Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jinyaqia.github.io.com/docs/getting-started/deployment.html</loc>
-    
-    <lastmod>2021-12-28T12:41:34.603Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jinyaqia.github.io.com/docs/advanced-settings/injects.html</loc>
-    
-    <lastmod>2021-12-28T12:41:34.602Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jinyaqia.github.io.com/docs/advanced-settings/custom-files.html</loc>
-    
-    <lastmod>2021-12-28T12:41:34.601Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jinyaqia.github.io.com/docs/advanced-settings/index.html</loc>
-    
-    <lastmod>2021-12-28T12:41:34.601Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jinyaqia.github.io.com/docs/advanced-settings/vendors.html</loc>
-    
-    <lastmod>2021-12-28T12:41:34.601Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jinyaqia.github.io.com/docs/advanced-settings/front-matter.html</loc>
-    
-    <lastmod>2021-12-28T12:41:34.600Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jinyaqia.github.io.com/docs/third-party-services/statistics-and-analytics.html</loc>
-    
-    <lastmod>2021-12-28T12:41:34.600Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jinyaqia.github.io.com/docs/third-party-services/chat-services.html</loc>
-    
-    <lastmod>2021-12-28T12:41:34.599Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jinyaqia.github.io.com/docs/third-party-services/external-libraries.html</loc>
-    
-    <lastmod>2021-12-28T12:41:34.599Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jinyaqia.github.io.com/docs/third-party-services/index.html</loc>
-    
-    <lastmod>2021-12-28T12:41:34.599Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jinyaqia.github.io.com/docs/third-party-services/comments.html</loc>
-    
-    <lastmod>2021-12-28T12:41:34.598Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jinyaqia.github.io.com/docs/third-party-services/post-widgets.html</loc>
-    
-    <lastmod>2021-12-28T12:41:34.598Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jinyaqia.github.io.com/docs/third-party-services/search-services.html</loc>
-    
-    <lastmod>2021-12-28T12:41:34.598Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jinyaqia.github.io.com/docs/theme-settings/posts.html</loc>
-    
-    <lastmod>2021-12-28T12:41:34.597Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jinyaqia.github.io.com/docs/third-party-services/math-equations.html</loc>
-    
-    <lastmod>2021-12-28T12:41:34.597Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jinyaqia.github.io.com/docs/theme-settings/internationalization.html</loc>
-    
-    <lastmod>2021-12-28T12:41:34.596Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jinyaqia.github.io.com/docs/theme-settings/sidebar.html</loc>
-    
-    <lastmod>2021-12-28T12:41:34.596Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jinyaqia.github.io.com/docs/theme-settings/custom-pages.html</loc>
-    
-    <lastmod>2021-12-28T12:41:34.595Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jinyaqia.github.io.com/docs/theme-settings/index.html</loc>
-    
-    <lastmod>2021-12-28T12:41:34.595Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jinyaqia.github.io.com/docs/theme-settings/seo.html</loc>
-    
-    <lastmod>2021-12-28T12:41:34.595Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jinyaqia.github.io.com/docs/theme-settings/footer.html</loc>
-    
-    <lastmod>2021-12-28T12:41:34.594Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jinyaqia.github.io.com/docs/theme-settings/miscellaneous.html</loc>
-    
-    <lastmod>2021-12-28T12:41:34.594Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://jinyaqia.github.io.com/plugins/index.html</loc>
-    
-    <lastmod>2021-12-28T12:41:34.593Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jinyaqia.github.io.com/docs/troubleshooting.html</loc>
     
     <lastmod>2021-12-28T12:41:34.593Z</lastmod>
     
