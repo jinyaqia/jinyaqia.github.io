@@ -1,7 +1,7 @@
 ---
 title: clickhouse集群迁移实践
 date: 2021-12-15 23:43:57
-tags: 运维
+tags: clickhouse
 categories: 
 - clickhouse
 ---

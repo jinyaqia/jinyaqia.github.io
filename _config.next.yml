@@ -18,11 +18,11 @@ custom_file_path:
 # ============================================================= #
 
 # scheme: Muse
-scheme: Mist
-#scheme: Pisces
-# scheme: Gemini
+# scheme: Mist
+# scheme: Pisces
+scheme: Gemini
 
-darkmode: false
+darkmode: true
 
 
 # ============================================================= #
@@ -31,7 +31,7 @@ darkmode: false
 
 
 creative_commons:
-  license: zero       # License类型： by | by-nc | by-nc-nd | by-nc-sa | by-nd | by-sa | zero
+  license: by       # License类型： by | by-nc | by-nc-nd | by-nc-sa | by-nd | by-sa | zero
   sidebar: false          # 在侧边栏有一个版权的图片链接
   post: true              # 在每一篇文章末尾自动增加本文作者、本文链接、版权声明信息
   language: deed.zh       # 点击链接后显示的版权信息的语言
@@ -97,7 +97,6 @@ menu:
     #   Front Matter: /front-matter.html || fa fa-edit
 
     # Troubleshooting: /troubleshooting.html || fa fa-life-ring
-
   archives: /archives/ || fa fa-archive
   # sitemap: /sitemap.xml || fa fa-sitemap
   # commonweal: /404/ || fa fa-heartbeat
@@ -195,7 +194,7 @@ github_banner:
   title: 我的github
 
 font:
-  enable: false
+  enable: true
   host: //fonts.loli.net
   codes:
     external: true
@@ -314,3 +313,25 @@ reading_progress:
   position: top
   color: '#37c6c0'
   height: 3px
+
+
+# gitment_owner: jinyaqia      #你的 GitHub ID
+# gitment_remote: false  # 是否使用官方js(false可以提升访问速度)
+# gitment_repo: 'blog-comment'          #存储评论的 repo
+# gitment_oauth:
+#   client_id: 8847849f11391039a318           #client ID
+#   client_secret: 22112cd166124700763c7c1fdcacf28902e318e1       #client secret
+
+gitment:
+  enable: true
+  mint: true # RECOMMEND, A mint on Gitment, to support count, language and proxy_gateway
+  count: true # Show comments count in post meta area
+  lazy: false # Comments lazy loading with a button
+  cleanly: true # Hide 'Powered by ...' on footer, and more
+  language: # Force language, or auto switch by theme
+  github_user: jinyaqia
+  github_repo: blog-comment
+  client_id: 8847849f11391039a318
+  client_secret: 22112cd166124700763c7c1fdcacf28902e318e1
+  proxy_gateway: # Address of api proxy, See: https://github.com/aimingoo/intersect
+  redirect_protocol: # Protocol of redirect_uri with force_redirect_protocol when mint enabled

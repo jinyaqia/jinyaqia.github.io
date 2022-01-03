@@ -1,7 +1,7 @@
 ---
 title: ck集群运维注意事项
 date: 2021-12-15 23:43:57
-tags: 运维
+tags: clickhouse
 categories: 
 - clickhouse
 ---

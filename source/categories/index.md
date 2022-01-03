@@ -1,6 +1,7 @@
 ---
 layout: page
-title: 分类
-date: 2021-12-28 21:19:29
+title: categories
+date: 2022-01-03 16:20:23
+type: "categories"
 tags:
 ---

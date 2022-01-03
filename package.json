@@ -26,6 +26,7 @@
   },
   "homepage": "https://theme-next.js.org",
   "dependencies": {
+    "gitment": "^0.0.3",
     "hexo": "^6.0.0",
     "hexo-deployer-git": "^3.0.0",
     "hexo-filter-mathjax": "^0.8.0",
