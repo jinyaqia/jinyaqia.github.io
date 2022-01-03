@@ -30,6 +30,27 @@
   </entry>
   
   <entry>
+    <title>ck集群运维注意事项</title>
+    <link href="https://jinyaqia.github.io.com/clickhouse/dev_notify/"/>
+    <id>https://jinyaqia.github.io.com/clickhouse/dev_notify/</id>
+    <published>2021-12-15T15:43:57.000Z</published>
+    <updated>2022-01-03T08:24:12.200Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="ck集群运维注意事项"><a href="#ck集群运维注意事项" class="headerlink" title="ck集群运维注意事项"></a>ck集群运维注意事项</h1><span id="more"></span><ol><li><p>alter时，只需要在一个分片上执行即可</p></li><li><p>遇到zookeeper session expire删除不了表，可以先detach再attach</p></li><li><p>ck mutation可以保证异步操作不会删除新写入的数据，可以通过system.mutations查看进度</p></li><li><p>多磁盘空出两块盘，单独部署zk,并且将zk的log和snapshot分开</p></li><li><p>遇到too many parts时，需要控制写入速度。sinker看看是不是负载没有好,可以 alter table t_dw_huya_page_pv_ck on cluster single modify setting parts_to_throw_insert=600 增大抛异常的值，但是本质上还是后台merge跟不上插入，可以增大io性能，或减少分区</p></li><li><p>没有副本的cluster,要设置 <internal_replication>false</internal_replication></p></li><li><p>修改<code>&lt;background_pool_size&gt;64&lt;/background_pool_size&gt;     &lt;background_schedule_pool_size&gt;64&lt;/background_schedule_pool_size&gt;    &lt;background_move_pool_size&gt;32&lt;/background_move_pool_size&gt;</code>调大后台执行线程数</p></li><li><p>修改<code>&lt;max_partitions_per_insert_block&gt;1000&lt;/max_partitions_per_insert_block&gt;</code> 解决 DB::Exception: Too many partitions for single INSERT block (more than 100)的问题</p></li><li><p>修改```<max_replicated_merges_in_queue>200</max_replicated_merges_in_queue></p><pre><code> &lt;max_replicated_mutations_in_queue&gt;200&lt;/max_replicated_mutations_in_queue&gt;```</code></pre><p>解决  Number of queued merges (36) and part mutations (0) is greater than max_replicated_merges_in_queue (16)  的错误</p></li><li><p>查看集群事件和指标<br>SELECT<br>event_time,<br>ProfileEvent_InsertQuery,<br>runningDifference(ProfileEvent_InsertQuery) ins_per_sec<br>FROM system.metric_log<br>WHERE event_date = today()<br>ORDER BY event_time DESC<br>LIMIT 50;<br>SELECT value<br>FROM system.events<br>WHERE event LIKE &#39;InsertQuery&#39;</p></li><li><p>查看多少mutation没执行<code>select table,command,mutation_id,create_time,is_done,latest_fail_time,latest_fail_reason,parts_to_do from system.mutations where table= &#39;t_oexp_precomputation_all_metric&#39; order by create_time limit  10</code></p></li><li><p>碰到 The local set of parts of table default.dwd_test doesn’t look like the set of parts in ZooKeeper 的问题，一般都是手动操作了表的ddl导致不同步，可以把metadata下的这个表先移除，让server可以正常启动，然后再重建表，数据会自动同步</p></li><li><p> select count() as c ,database||&#39;.&#39;||table from system.replication_queue where type=&#39;MUTATE_PART&#39;  group by database,table order by c</p></li><li><p> select count() as c ,database||&#39;.&#39;||table from system.mutations where is_done=0 group by database,table order by c</p></li><li><p> 遇到卡住的时候，可以先把卡住的表detach，然后批次attach回来</p></li></ol>]]></content>
+    
+    
+    <summary type="html">&lt;h1 id=&quot;ck集群运维注意事项&quot;&gt;&lt;a href=&quot;#ck集群运维注意事项&quot; class=&quot;headerlink&quot; title=&quot;ck集群运维注意事项&quot;&gt;&lt;/a&gt;ck集群运维注意事项&lt;/h1&gt;</summary>
+    
+    
+    
+    <category term="clickhouse" scheme="https://jinyaqia.github.io.com/categories/clickhouse/"/>
+    
+    
+    <category term="clickhouse" scheme="https://jinyaqia.github.io.com/tags/clickhouse/"/>
+    
+  </entry>
+  
+  <entry>
     <title>clickhouse源码构建</title>
     <link href="https://jinyaqia.github.io.com/clickhouse/build/"/>
     <id>https://jinyaqia.github.io.com/clickhouse/build/</id>
@@ -70,27 +91,6 @@
     
     
     <summary type="html">&lt;h1 id=&quot;clickhouse集群2副本安装&quot;&gt;&lt;a href=&quot;#clickhouse集群2副本安装&quot; class=&quot;headerlink&quot; title=&quot;clickhouse集群2副本安装&quot;&gt;&lt;/a&gt;clickhouse集群2副本安装&lt;/h1&gt;&lt;h2 id=&quot;使用4台机器&quot;&gt;&lt;a href=&quot;#使用4台机器&quot; class=&quot;headerlink&quot; title=&quot;使用4台机器&quot;&gt;&lt;/a&gt;使用4台机器&lt;/h2&gt;&lt;figure class=&quot;highlight dns&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;节点&lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;  &lt;span class=&quot;number&quot;&gt;10.64.148.133&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;节点&lt;span class=&quot;number&quot;&gt;2&lt;/span&gt;  &lt;span class=&quot;number&quot;&gt;10.64.148.134&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;节点&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;  &lt;span class=&quot;number&quot;&gt;10.64.148.135&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;节点&lt;span class=&quot;number&quot;&gt;4&lt;/span&gt;  &lt;span class=&quot;number&quot;&gt;10.64.138.24&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;</summary>
-    
-    
-    
-    <category term="clickhouse" scheme="https://jinyaqia.github.io.com/categories/clickhouse/"/>
-    
-    
-    <category term="clickhouse" scheme="https://jinyaqia.github.io.com/tags/clickhouse/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>ck集群运维注意事项</title>
-    <link href="https://jinyaqia.github.io.com/clickhouse/dev_notify/"/>
-    <id>https://jinyaqia.github.io.com/clickhouse/dev_notify/</id>
-    <published>2021-12-15T15:43:57.000Z</published>
-    <updated>2022-01-03T08:24:12.200Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="ck集群运维注意事项"><a href="#ck集群运维注意事项" class="headerlink" title="ck集群运维注意事项"></a>ck集群运维注意事项</h1><span id="more"></span><ol><li><p>alter时，只需要在一个分片上执行即可</p></li><li><p>遇到zookeeper session expire删除不了表，可以先detach再attach</p></li><li><p>ck mutation可以保证异步操作不会删除新写入的数据，可以通过system.mutations查看进度</p></li><li><p>多磁盘空出两块盘，单独部署zk,并且将zk的log和snapshot分开</p></li><li><p>遇到too many parts时，需要控制写入速度。sinker看看是不是负载没有好,可以 alter table t_dw_huya_page_pv_ck on cluster single modify setting parts_to_throw_insert=600 增大抛异常的值，但是本质上还是后台merge跟不上插入，可以增大io性能，或减少分区</p></li><li><p>没有副本的cluster,要设置 <internal_replication>false</internal_replication></p></li><li><p>修改<code>&lt;background_pool_size&gt;64&lt;/background_pool_size&gt;     &lt;background_schedule_pool_size&gt;64&lt;/background_schedule_pool_size&gt;    &lt;background_move_pool_size&gt;32&lt;/background_move_pool_size&gt;</code>调大后台执行线程数</p></li><li><p>修改<code>&lt;max_partitions_per_insert_block&gt;1000&lt;/max_partitions_per_insert_block&gt;</code> 解决 DB::Exception: Too many partitions for single INSERT block (more than 100)的问题</p></li><li><p>修改```<max_replicated_merges_in_queue>200</max_replicated_merges_in_queue></p><pre><code> &lt;max_replicated_mutations_in_queue&gt;200&lt;/max_replicated_mutations_in_queue&gt;```</code></pre><p>解决  Number of queued merges (36) and part mutations (0) is greater than max_replicated_merges_in_queue (16)  的错误</p></li><li><p>查看集群事件和指标<br>SELECT<br>event_time,<br>ProfileEvent_InsertQuery,<br>runningDifference(ProfileEvent_InsertQuery) ins_per_sec<br>FROM system.metric_log<br>WHERE event_date = today()<br>ORDER BY event_time DESC<br>LIMIT 50;<br>SELECT value<br>FROM system.events<br>WHERE event LIKE &#39;InsertQuery&#39;</p></li><li><p>查看多少mutation没执行<code>select table,command,mutation_id,create_time,is_done,latest_fail_time,latest_fail_reason,parts_to_do from system.mutations where table= &#39;t_oexp_precomputation_all_metric&#39; order by create_time limit  10</code></p></li><li><p>碰到 The local set of parts of table default.dwd_test doesn’t look like the set of parts in ZooKeeper 的问题，一般都是手动操作了表的ddl导致不同步，可以把metadata下的这个表先移除，让server可以正常启动，然后再重建表，数据会自动同步</p></li><li><p> select count() as c ,database||&#39;.&#39;||table from system.replication_queue where type=&#39;MUTATE_PART&#39;  group by database,table order by c</p></li><li><p> select count() as c ,database||&#39;.&#39;||table from system.mutations where is_done=0 group by database,table order by c</p></li><li><p> 遇到卡住的时候，可以先把卡住的表detach，然后批次attach回来</p></li></ol>]]></content>
-    
-    
-    <summary type="html">&lt;h1 id=&quot;ck集群运维注意事项&quot;&gt;&lt;a href=&quot;#ck集群运维注意事项&quot; class=&quot;headerlink&quot; title=&quot;ck集群运维注意事项&quot;&gt;&lt;/a&gt;ck集群运维注意事项&lt;/h1&gt;</summary>
     
     
     
