@@ -59,7 +59,7 @@ prismjs:
 index_generator:
   path: ''
   per_page: 20
-  order_by: date
+  order_by: -date
 
 # Category & Tag
 default_category: uncategorized
@@ -91,12 +91,12 @@ archive_generator:
 
 category_generator:
   per_page: 20
-  order_by: date
+  order_by: -date
   category_generator: true
 
 tag_generator:
   per_page: 20
-  order_by: date
+  order_by: -date
   tag_generator: true
 
 marked:
