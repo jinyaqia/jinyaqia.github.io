@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
+<meta name="generator" content="Hexo 6.0.0">
+
+<link rel="preconnect" href="//fonts.loli.net" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.loli.net/css?family=Lato:300,300italic,400,400italic,700,700italic%7CInconsolata:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"jinyaqia.github.io.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.8.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="单独调整source并行度当前flink 1.12版本会默认将TableSourceScan算子（从kafka&#x2F;pulsar&#x2F;..读取数据）和Calc（反序列化）chain在一起，以降低网络io。在一些特定场景下，比如作业并行度已经调整到和topic分区数一样后仍出现积压，此时只能通过扩topic分区，再扩flink作业并行度来提高整个作业的吞吐。当flink读取那个topic有多个消费者的时候，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="flink单独调整source并行度">
+<meta property="og:url" content="https://jinyaqia.github.io.com/flink/support-source/index.html">
+<meta property="og:site_name" content="洽洽的博客">
+<meta property="og:description" content="单独调整source并行度当前flink 1.12版本会默认将TableSourceScan算子（从kafka&#x2F;pulsar&#x2F;..读取数据）和Calc（反序列化）chain在一起，以降低网络io。在一些特定场景下，比如作业并行度已经调整到和topic分区数一样后仍出现积压，此时只能通过扩topic分区，再扩flink作业并行度来提高整个作业的吞吐。当flink读取那个topic有多个消费者的时候，">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://jinyaqia.github.io.com/images/flink/optimize-1.png">
+<meta property="og:image" content="https://jinyaqia.github.io.com/images/flink/optimoze-2.png">
+<meta property="og:image" content="https://jinyaqia.github.io.com/images/flink/optimize-3.png">
+<meta property="og:image" content="https://jinyaqia.github.io.com/images/flink/optimize-4.png">
+<meta property="article:published_time" content="2022-01-05T06:43:57.000Z">
+<meta property="article:modified_time" content="2022-01-06T03:05:55.743Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="flink">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://jinyaqia.github.io.com/images/flink/optimize-1.png">
+
+
+<link rel="canonical" href="https://jinyaqia.github.io.com/flink/support-source/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://jinyaqia.github.io.com/flink/support-source/","path":"flink/support-source/","title":"flink单独调整source并行度"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>flink单独调整source并行度 | 洽洽的博客</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="洽洽的博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">洽洽的博客</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-bell fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">3</span></a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">2</span></a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">8</span></a></li>
+        <li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%95%E7%8B%AC%E8%B0%83%E6%95%B4source%E5%B9%B6%E8%A1%8C%E5%BA%A6"><span class="nav-number">1.</span> <span class="nav-text">单独调整source并行度</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E5%89%8D"><span class="nav-number">1.1.</span> <span class="nav-text">优化前</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E5%90%8E"><span class="nav-number">1.2.</span> <span class="nav-text">优化后</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="洽洽"
+      src="/images/logo.png">
+  <p class="site-author-name" itemprop="name">洽洽</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/jinyaqia" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;jinyaqia" rel="noopener" target="_blank">GitHub</a>
+      </span>
+  </div>
+
+
+<div itemprop="sponsor">
+
+  专注大数据领域
+</div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://jinyaqia.github.io.com/flink/support-source/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/logo.png">
+      <meta itemprop="name" content="洽洽">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="洽洽的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          flink单独调整source并行度
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-01-05 14:43:57" itemprop="dateCreated datePublished" datetime="2022-01-05T14:43:57+08:00">2022-01-05</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2022-01-06 11:05:55" itemprop="dateModified" datetime="2022-01-06T11:05:55+08:00">2022-01-06</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/flink/" itemprop="url" rel="index"><span itemprop="name">flink</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>740</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="单独调整source并行度"><a href="#单独调整source并行度" class="headerlink" title="单独调整source并行度"></a>单独调整source并行度</h1><p>当前flink 1.12版本会默认将TableSourceScan算子（从kafka/pulsar/..读取数据）和Calc（反序列化）chain在一起，以降低网络io。在一些特定场景下，比如作业并行度已经调整到和topic分区数一样后仍出现积压，此时只能通过扩topic分区，再扩flink作业并行度来提高整个作业的吞吐。当flink读取那个topic有多个消费者的时候，可能会影响其他的作业，因此比较好的做法是单独设置TableSourceScan的并行度，TableSourceScan将读取的数据rebalance/rescale到下游算子，下游算子可以设置较大的并行度。</p>
+<p>可以通过给source table的ddl中添加 source.parallelism=&lt;topic分区数&gt;，调大作业并行度来进行优化。</p>
+<span id="more"></span>
+<h2 id="优化前"><a href="#优化前" class="headerlink" title="优化前"></a>优化前</h2><p>针对下面的sql</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">view</span> oriData (ip,ts,data) <span class="keyword">as</span></span><br><span class="line"><span class="keyword">select</span> </span><br><span class="line">ip,</span><br><span class="line">`<span class="type">timestamp</span>` <span class="keyword">as</span> ts,</span><br><span class="line">data </span><br><span class="line"><span class="keyword">from</span> r_dataplat.ods_hadoop_nn_log </span><br><span class="line"><span class="keyword">where</span> `<span class="keyword">module</span>`<span class="operator">=</span><span class="string">&#x27;hdfs&#x27;</span> <span class="keyword">and</span> `type`<span class="operator">=</span><span class="string">&#x27;nn&#x27;</span> <span class="keyword">and</span> (`data` <span class="keyword">like</span> <span class="string">&#x27;%completeFile%&#x27;</span> <span class="keyword">or</span> `data` <span class="keyword">like</span> <span class="string">&#x27;%cmd=rename%&#x27;</span> <span class="keyword">or</span> `data` <span class="keyword">like</span> <span class="string">&#x27;%cmd=delete%&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">create</span> <span class="keyword">view</span> parse_fileclose_rs (nn,ts,path,event_type) <span class="keyword">as</span></span><br><span class="line"><span class="keyword">select</span> ip nn,</span><br><span class="line">ts,</span><br><span class="line"><span class="built_in">SUBSTRING</span>(data <span class="keyword">from</span> <span class="built_in">POSITION</span>(<span class="string">&#x27;completeFile&#x27;</span> <span class="keyword">in</span> data)<span class="operator">+</span><span class="keyword">CHAR_LENGTH</span>(<span class="string">&#x27;completeFile: &#x27;</span>) <span class="keyword">for</span> (<span class="built_in">POSITION</span>(<span class="string">&#x27; is closed &#x27;</span> <span class="keyword">in</span> data)<span class="operator">-</span><span class="built_in">POSITION</span>(<span class="string">&#x27;completeFile&#x27;</span> <span class="keyword">in</span> data)<span class="operator">-</span><span class="keyword">CHAR_LENGTH</span>(<span class="string">&#x27;completeFile: &#x27;</span>)) ) path,</span><br><span class="line"><span class="string">&#x27;completeFile&#x27;</span> event_type </span><br><span class="line"><span class="keyword">from</span> oriData a </span><br><span class="line"><span class="keyword">where</span> `data` <span class="keyword">like</span> <span class="string">&#x27;%completeFile%&#x27;</span></span><br><span class="line">;</span><br><span class="line"></span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> r_dataplat.hdfs_namenode_nodeevent(namenode,node_id,path,event_type,ts)</span><br><span class="line"><span class="keyword">select</span> nn <span class="keyword">as</span> namenode,</span><br><span class="line"><span class="built_in">cast</span>( <span class="number">0</span> <span class="keyword">as</span> <span class="type">BIGINT</span>) node_id,</span><br><span class="line">path,</span><br><span class="line">event_type,</span><br><span class="line">ts <span class="keyword">from</span></span><br><span class="line">parse_fileclose_rs <span class="keyword">where</span> <span class="built_in">POSITION</span>(<span class="string">&#x27;/.&#x27;</span> <span class="keyword">in</span> path)<span class="operator">=</span><span class="number">0</span>;</span><br><span class="line"><span class="comment">--去掉隐藏文件a</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">create</span> <span class="keyword">view</span> parse_filerename_rs (nn,ts,path,event_type) <span class="keyword">as</span></span><br><span class="line"><span class="keyword">select</span> ip nn ,</span><br><span class="line">ts,</span><br><span class="line"><span class="built_in">SUBSTRING</span>(data <span class="keyword">from</span> <span class="built_in">POSITION</span>(<span class="string">&#x27;cmd=rename&#x27;</span> <span class="keyword">in</span> data)<span class="operator">+</span><span class="keyword">CHAR_LENGTH</span>(<span class="string">&#x27;cmd=rename&#x27;</span>) <span class="keyword">for</span> (<span class="built_in">POSITION</span>(<span class="string">&#x27;perm=&#x27;</span> <span class="keyword">in</span> data)<span class="operator">-</span><span class="built_in">POSITION</span>(<span class="string">&#x27;cmd=rename&#x27;</span> <span class="keyword">in</span> data)<span class="operator">-</span><span class="keyword">CHAR_LENGTH</span>(<span class="string">&#x27;cmd=rename&#x27;</span>)) ) path,</span><br><span class="line"><span class="string">&#x27;renameFile&#x27;</span> event_type </span><br><span class="line"><span class="keyword">from</span> oriData a </span><br><span class="line"><span class="keyword">where</span> `data` <span class="keyword">like</span> <span class="string">&#x27;%cmd=rename%&#x27;</span></span><br><span class="line">;</span><br><span class="line"></span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> r_dataplat.hdfs_namenode_nodeevent(namenode,node_id,path,event_type,ts)</span><br><span class="line"><span class="keyword">select</span> nn <span class="keyword">as</span> namenode,</span><br><span class="line"><span class="built_in">cast</span>( <span class="number">0</span> <span class="keyword">as</span> <span class="type">BIGINT</span>) node_id,</span><br><span class="line">path,</span><br><span class="line">event_type,</span><br><span class="line">ts <span class="keyword">from</span></span><br><span class="line">parse_filerename_rs;</span><br><span class="line"><span class="comment">--去掉隐藏文件</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">create</span> <span class="keyword">view</span> parse_filedelete_rs (nn,ts,path,event_type) <span class="keyword">as</span></span><br><span class="line"><span class="keyword">select</span> ip nn,</span><br><span class="line">ts,</span><br><span class="line"><span class="built_in">SUBSTRING</span>(data <span class="keyword">from</span> <span class="built_in">POSITION</span>(<span class="string">&#x27;cmd=delete&#x27;</span> <span class="keyword">in</span> data)<span class="operator">+</span><span class="keyword">CHAR_LENGTH</span>(<span class="string">&#x27;cmd=delete&#x27;</span>) <span class="keyword">for</span> (<span class="built_in">POSITION</span>(<span class="string">&#x27;perm=&#x27;</span> <span class="keyword">in</span> data)<span class="operator">-</span><span class="built_in">POSITION</span>(<span class="string">&#x27;cmd=delete&#x27;</span> <span class="keyword">in</span> data)<span class="operator">-</span><span class="keyword">CHAR_LENGTH</span>(<span class="string">&#x27;cmd=delete&#x27;</span>)) ) path,</span><br><span class="line"><span class="string">&#x27;deleteFile&#x27;</span> event_type </span><br><span class="line"><span class="keyword">from</span> oriData a </span><br><span class="line"><span class="keyword">where</span> `data` <span class="keyword">like</span> <span class="string">&#x27;%cmd=delete%&#x27;</span></span><br><span class="line">;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> r_dataplat.hdfs_namenode_nodeevent(namenode,node_id,path,event_type,ts)</span><br><span class="line"><span class="keyword">select</span> nn <span class="keyword">as</span> namenode,</span><br><span class="line"><span class="built_in">cast</span>( <span class="number">0</span> <span class="keyword">as</span> <span class="type">BIGINT</span>) node_id,</span><br><span class="line">path,</span><br><span class="line">event_type,</span><br><span class="line">ts <span class="keyword">from</span></span><br><span class="line">parse_filedelete_rs <span class="keyword">where</span> <span class="built_in">POSITION</span>(<span class="string">&#x27;/.&#x27;</span> <span class="keyword">in</span> path)<span class="operator">=</span><span class="number">0</span>;</span><br><span class="line"><span class="comment">--去掉隐藏文件</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>生成的物理执行计划如下：</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">== Physical Execution Plan ==</span><br><span class="line">Stage <span class="number">1</span> : Data Source</span><br><span class="line">	content : Source: TableSourceScan(table=[[default_catalog, default_database, ods_hadoop_nn_log]], fields=[app, module, <span class="keyword">type</span>, data, ip, logFile, <span class="type">timestamp</span>])</span><br><span class="line"></span><br><span class="line">	Stage <span class="number">2</span> : <span class="keyword">Operator</span></span><br><span class="line">		content : Calc(<span class="keyword">select</span>=[ip, <span class="type">timestamp</span> <span class="keyword">AS</span> ts, data], <span class="keyword">where</span>=[((CAST(module) = _UTF<span class="number">-16</span>L<span class="string">E&#x27;hdfs&#x27;</span>:<span class="type">VARCHAR</span>(<span class="number">4</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> &quot;UTF-16LE&quot;) <span class="keyword">AND</span> (CAST(<span class="keyword">type</span>) = _UTF<span class="number">-16</span>L<span class="string">E&#x27;nn&#x27;</span>:<span class="type">VARCHAR</span>(<span class="number">2</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> &quot;UTF-16LE&quot;) <span class="keyword">AND</span> ((data <span class="keyword">LIKE</span> _UTF<span class="number">-16</span>L<span class="string">E&#x27;%completeFile%&#x27;</span>) <span class="keyword">OR</span> (data <span class="keyword">LIKE</span> _UTF<span class="number">-16</span>L<span class="string">E&#x27;%cmd=rename%&#x27;</span>) <span class="keyword">OR</span> (data <span class="keyword">LIKE</span> _UTF<span class="number">-16</span>L<span class="string">E&#x27;%cmd=delete%&#x27;</span>)))])</span><br><span class="line">		ship_strategy : FORWARD</span><br><span class="line"></span><br><span class="line">		Stage <span class="number">3</span> : <span class="keyword">Operator</span></span><br><span class="line">			content : Calc(<span class="keyword">select</span>=[ip <span class="keyword">AS</span> namenode, <span class="number">0</span>:<span class="type">BIGINT</span> <span class="keyword">AS</span> node_id, (data SUBSTRING ((_UTF<span class="number">-16</span>L<span class="string">E&#x27;completeFile&#x27;</span> POSITION data) + <span class="number">14</span>) SUBSTRING (((_UTF<span class="number">-16</span>L<span class="string">E&#x27; is closed &#x27;</span> POSITION data) - (_UTF<span class="number">-16</span>L<span class="string">E&#x27;completeFile&#x27;</span> POSITION data)) - <span class="number">14</span>)) <span class="keyword">AS</span> <span class="type">path</span>, CAST(CAST(_UTF<span class="number">-16</span>L<span class="string">E&#x27;completeFile&#x27;</span>)) <span class="keyword">AS</span> event_type, ts], <span class="keyword">where</span>=[((data <span class="keyword">LIKE</span> _UTF<span class="number">-16</span>L<span class="string">E&#x27;%completeFile%&#x27;</span>) <span class="keyword">AND</span> ((_UTF<span class="number">-16</span>L<span class="string">E&#x27;/.&#x27;</span> POSITION (data SUBSTRING ((_UTF<span class="number">-16</span>L<span class="string">E&#x27;completeFile&#x27;</span> POSITION data) + <span class="number">14</span>) SUBSTRING (((_UTF<span class="number">-16</span>L<span class="string">E&#x27; is closed &#x27;</span> POSITION data) - (_UTF<span class="number">-16</span>L<span class="string">E&#x27;completeFile&#x27;</span> POSITION data)) - <span class="number">14</span>))) = <span class="number">0</span>))])</span><br><span class="line">			ship_strategy : FORWARD</span><br><span class="line"></span><br><span class="line">			Stage <span class="number">5</span> : <span class="keyword">Operator</span></span><br><span class="line">				content : Calc(<span class="keyword">select</span>=[ip <span class="keyword">AS</span> namenode, <span class="number">0</span>:<span class="type">BIGINT</span> <span class="keyword">AS</span> node_id, (data SUBSTRING ((_UTF<span class="number">-16</span>L<span class="string">E&#x27;cmd=rename&#x27;</span> POSITION data) + <span class="number">10</span>) SUBSTRING (((_UTF<span class="number">-16</span>L<span class="string">E&#x27;perm=&#x27;</span> POSITION data) - (_UTF<span class="number">-16</span>L<span class="string">E&#x27;cmd=rename&#x27;</span> POSITION data)) - <span class="number">10</span>)) <span class="keyword">AS</span> <span class="type">path</span>, CAST(CAST(_UTF<span class="number">-16</span>L<span class="string">E&#x27;renameFile&#x27;</span>)) <span class="keyword">AS</span> event_type, ts], <span class="keyword">where</span>=[(data <span class="keyword">LIKE</span> _UTF<span class="number">-16</span>L<span class="string">E&#x27;%cmd=rename%&#x27;</span>)])</span><br><span class="line">				ship_strategy : FORWARD</span><br><span class="line"></span><br><span class="line">				Stage <span class="number">7</span> : <span class="keyword">Operator</span></span><br><span class="line">					content : Calc(<span class="keyword">select</span>=[ip <span class="keyword">AS</span> namenode, <span class="number">0</span>:<span class="type">BIGINT</span> <span class="keyword">AS</span> node_id, (data SUBSTRING ((_UTF<span class="number">-16</span>L<span class="string">E&#x27;cmd=delete&#x27;</span> POSITION data) + <span class="number">10</span>) SUBSTRING (((_UTF<span class="number">-16</span>L<span class="string">E&#x27;perm=&#x27;</span> POSITION data) - (_UTF<span class="number">-16</span>L<span class="string">E&#x27;cmd=delete&#x27;</span> POSITION data)) - <span class="number">10</span>)) <span class="keyword">AS</span> <span class="type">path</span>, CAST(CAST(_UTF<span class="number">-16</span>L<span class="string">E&#x27;deleteFile&#x27;</span>)) <span class="keyword">AS</span> event_type, ts], <span class="keyword">where</span>=[((data <span class="keyword">LIKE</span> _UTF<span class="number">-16</span>L<span class="string">E&#x27;%cmd=delete%&#x27;</span>) <span class="keyword">AND</span> ((_UTF<span class="number">-16</span>L<span class="string">E&#x27;/.&#x27;</span> POSITION (data SUBSTRING ((_UTF<span class="number">-16</span>L<span class="string">E&#x27;cmd=delete&#x27;</span> POSITION data) + <span class="number">10</span>) SUBSTRING (((_UTF<span class="number">-16</span>L<span class="string">E&#x27;perm=&#x27;</span> POSITION data) - (_UTF<span class="number">-16</span>L<span class="string">E&#x27;cmd=delete&#x27;</span> POSITION data)) - <span class="number">10</span>))) = <span class="number">0</span>))])</span><br><span class="line">					ship_strategy : FORWARD</span><br><span class="line"></span><br><span class="line">					Stage <span class="number">4</span> : Data Sink</span><br><span class="line">						content : Sink: Sink(table=[default_catalog.default_database.hdfs_namenode_nodeevent], fields=[namenode, node_id, <span class="type">path</span>, event_type, ts])</span><br><span class="line">						ship_strategy : FORWARD</span><br><span class="line"></span><br><span class="line">						Stage <span class="number">6</span> : Data Sink</span><br><span class="line">							content : Sink: Sink(table=[default_catalog.default_database.hdfs_namenode_nodeevent], fields=[namenode, node_id, <span class="type">path</span>, event_type, ts])</span><br><span class="line">							ship_strategy : FORWARD</span><br><span class="line"></span><br><span class="line">							Stage <span class="number">8</span> : Data Sink</span><br><span class="line">								content : Sink: Sink(table=[default_catalog.default_database.hdfs_namenode_nodeevent], fields=[namenode, node_id, <span class="type">path</span>, event_type, ts])</span><br><span class="line">								ship_strategy : FORWARD</span><br></pre></td></tr></table></figure>
+
+<p><img src="../../images/flink/optimize-1.png" alt="image-20211227115029562" loading="lazy"></p>
+<p>可以看到Stage 2后的ship_strategy是FORWARD，并且flink会所有算子都使用默认的并行度，就会将Stage 1和2 chain在一起，而后续都是FORWARD的数据shuffle模式, 所以所有的算子都是chain在一起的，为了更详细的观察每个算子的数据情况，设置<code>set pipeline.operator-chaining=false;</code></p>
+<p>jobGraph变成：</p>
+<p><img src="../../images/flink/optimoze-2.png" alt="image-20211227115540710" loading="lazy"></p>
+<p><img src="../../images/flink/optimize-3.png" alt="image-20211227115628817" loading="lazy"></p>
+<p>对于每个算子而言，能利用的最大并行度就等于Date Source的topic的分区数。这个就限制了程序后续处理的吞吐。</p>
+<h2 id="优化后"><a href="#优化后" class="headerlink" title="优化后"></a>优化后</h2><p>自定义并行度，通过在source table的语句里添加source.parallelism参数设置source算子的并行度，调大作业的默认并行度即可。</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">sailfish扩展的set语法，将source.parallelism添加到r_dataplat.ods_hadoop_nn_log流表的ddl中</span></span><br><span class="line"></span><br><span class="line"><span class="attr">set</span> <span class="string">table.r_dataplat.ods_hadoop_nn_log.source.parallelism=6;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">== Physical Execution Plan ==</span><br><span class="line">Stage <span class="number">1</span> : Data Source</span><br><span class="line">	content : Source: TableSourceScan(table=[[default_catalog, default_database, ods_hadoop_nn_log]], fields=[app, module, <span class="keyword">type</span>, data, ip, logFile, <span class="type">timestamp</span>])</span><br><span class="line"></span><br><span class="line">	Stage <span class="number">2</span> : <span class="keyword">Operator</span></span><br><span class="line">		content : Calc(<span class="keyword">select</span>=[ip, <span class="type">timestamp</span> <span class="keyword">AS</span> ts, data], <span class="keyword">where</span>=[((CAST(module) = _UTF<span class="number">-16</span>L<span class="string">E&#x27;hdfs&#x27;</span>:<span class="type">VARCHAR</span>(<span class="number">4</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> &quot;UTF-16LE&quot;) <span class="keyword">AND</span> (CAST(<span class="keyword">type</span>) = _UTF<span class="number">-16</span>L<span class="string">E&#x27;nn&#x27;</span>:<span class="type">VARCHAR</span>(<span class="number">2</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> &quot;UTF-16LE&quot;) <span class="keyword">AND</span> ((data <span class="keyword">LIKE</span> _UTF<span class="number">-16</span>L<span class="string">E&#x27;%completeFile%&#x27;</span>) <span class="keyword">OR</span> (data <span class="keyword">LIKE</span> _UTF<span class="number">-16</span>L<span class="string">E&#x27;%cmd=rename%&#x27;</span>) <span class="keyword">OR</span> (data <span class="keyword">LIKE</span> _UTF<span class="number">-16</span>L<span class="string">E&#x27;%cmd=delete%&#x27;</span>)))])</span><br><span class="line">		ship_strategy : REBALANCE</span><br><span class="line"></span><br><span class="line">		Stage <span class="number">3</span> : <span class="keyword">Operator</span></span><br><span class="line">			content : Calc(<span class="keyword">select</span>=[ip <span class="keyword">AS</span> namenode, <span class="number">0</span>:<span class="type">BIGINT</span> <span class="keyword">AS</span> node_id, (data SUBSTRING ((_UTF<span class="number">-16</span>L<span class="string">E&#x27;completeFile&#x27;</span> POSITION data) + <span class="number">14</span>) SUBSTRING (((_UTF<span class="number">-16</span>L<span class="string">E&#x27; is closed &#x27;</span> POSITION data) - (_UTF<span class="number">-16</span>L<span class="string">E&#x27;completeFile&#x27;</span> POSITION data)) - <span class="number">14</span>)) <span class="keyword">AS</span> <span class="type">path</span>, CAST(CAST(_UTF<span class="number">-16</span>L<span class="string">E&#x27;completeFile&#x27;</span>)) <span class="keyword">AS</span> event_type, ts], <span class="keyword">where</span>=[((data <span class="keyword">LIKE</span> _UTF<span class="number">-16</span>L<span class="string">E&#x27;%completeFile%&#x27;</span>) <span class="keyword">AND</span> ((_UTF<span class="number">-16</span>L<span class="string">E&#x27;/.&#x27;</span> POSITION (data SUBSTRING ((_UTF<span class="number">-16</span>L<span class="string">E&#x27;completeFile&#x27;</span> POSITION data) + <span class="number">14</span>) SUBSTRING (((_UTF<span class="number">-16</span>L<span class="string">E&#x27; is closed &#x27;</span> POSITION data) - (_UTF<span class="number">-16</span>L<span class="string">E&#x27;completeFile&#x27;</span> POSITION data)) - <span class="number">14</span>))) = <span class="number">0</span>))])</span><br><span class="line">			ship_strategy : FORWARD</span><br><span class="line"></span><br><span class="line">			Stage <span class="number">5</span> : <span class="keyword">Operator</span></span><br><span class="line">				content : Calc(<span class="keyword">select</span>=[ip <span class="keyword">AS</span> namenode, <span class="number">0</span>:<span class="type">BIGINT</span> <span class="keyword">AS</span> node_id, (data SUBSTRING ((_UTF<span class="number">-16</span>L<span class="string">E&#x27;cmd=rename&#x27;</span> POSITION data) + <span class="number">10</span>) SUBSTRING (((_UTF<span class="number">-16</span>L<span class="string">E&#x27;perm=&#x27;</span> POSITION data) - (_UTF<span class="number">-16</span>L<span class="string">E&#x27;cmd=rename&#x27;</span> POSITION data)) - <span class="number">10</span>)) <span class="keyword">AS</span> <span class="type">path</span>, CAST(CAST(_UTF<span class="number">-16</span>L<span class="string">E&#x27;renameFile&#x27;</span>)) <span class="keyword">AS</span> event_type, ts], <span class="keyword">where</span>=[(data <span class="keyword">LIKE</span> _UTF<span class="number">-16</span>L<span class="string">E&#x27;%cmd=rename%&#x27;</span>)])</span><br><span class="line">				ship_strategy : FORWARD</span><br><span class="line"></span><br><span class="line">				Stage <span class="number">7</span> : <span class="keyword">Operator</span></span><br><span class="line">					content : Calc(<span class="keyword">select</span>=[ip <span class="keyword">AS</span> namenode, <span class="number">0</span>:<span class="type">BIGINT</span> <span class="keyword">AS</span> node_id, (data SUBSTRING ((_UTF<span class="number">-16</span>L<span class="string">E&#x27;cmd=delete&#x27;</span> POSITION data) + <span class="number">10</span>) SUBSTRING (((_UTF<span class="number">-16</span>L<span class="string">E&#x27;perm=&#x27;</span> POSITION data) - (_UTF<span class="number">-16</span>L<span class="string">E&#x27;cmd=delete&#x27;</span> POSITION data)) - <span class="number">10</span>)) <span class="keyword">AS</span> <span class="type">path</span>, CAST(CAST(_UTF<span class="number">-16</span>L<span class="string">E&#x27;deleteFile&#x27;</span>)) <span class="keyword">AS</span> event_type, ts], <span class="keyword">where</span>=[((data <span class="keyword">LIKE</span> _UTF<span class="number">-16</span>L<span class="string">E&#x27;%cmd=delete%&#x27;</span>) <span class="keyword">AND</span> ((_UTF<span class="number">-16</span>L<span class="string">E&#x27;/.&#x27;</span> POSITION (data SUBSTRING ((_UTF<span class="number">-16</span>L<span class="string">E&#x27;cmd=delete&#x27;</span> POSITION data) + <span class="number">10</span>) SUBSTRING (((_UTF<span class="number">-16</span>L<span class="string">E&#x27;perm=&#x27;</span> POSITION data) - (_UTF<span class="number">-16</span>L<span class="string">E&#x27;cmd=delete&#x27;</span> POSITION data)) - <span class="number">10</span>))) = <span class="number">0</span>))])</span><br><span class="line">					ship_strategy : FORWARD</span><br><span class="line"></span><br><span class="line">					Stage <span class="number">4</span> : Data Sink</span><br><span class="line">						content : Sink: Sink(table=[default_catalog.default_database.hdfs_namenode_nodeevent], fields=[namenode, node_id, <span class="type">path</span>, event_type, ts])</span><br><span class="line">						ship_strategy : FORWARD</span><br><span class="line"></span><br><span class="line">						Stage <span class="number">6</span> : Data Sink</span><br><span class="line">							content : Sink: Sink(table=[default_catalog.default_database.hdfs_namenode_nodeevent], fields=[namenode, node_id, <span class="type">path</span>, event_type, ts])</span><br><span class="line">							ship_strategy : FORWARD</span><br><span class="line"></span><br><span class="line">							Stage <span class="number">8</span> : Data Sink</span><br><span class="line">								content : Sink: Sink(table=[default_catalog.default_database.hdfs_namenode_nodeevent], fields=[namenode, node_id, <span class="type">path</span>, event_type, ts])</span><br><span class="line">								ship_strategy : FORWARD</span><br></pre></td></tr></table></figure>
+
+<p><img src="../../images/flink/optimize-4.png" alt="image-20211227120322329" loading="lazy"></p>
+<p>具体实现可以参照<br><a target="_blank" rel="noopener" href="https://github.com/apache/flink/pull/18277/files">PR</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/flink/" rel="tag"># flink</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/clickhouse/juicefs/" rel="prev" title="clickhouse+JuiceFS冷热数据分层+读写分离的方案">
+                  <i class="fa fa-chevron-left"></i> clickhouse+JuiceFS冷热数据分层+读写分离的方案
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">洽洽</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">7k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">7 分钟</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div><div class="footer-custom">
+</div>
+
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js" integrity="sha256-EdPgYcPk/IIrw7FYeuJQexva49pVRZNmt3LculEr7zM=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+  <script class="next-config" data-name="pdf" type="application/json">{"object_url":{"url":"https://cdn.jsdelivr.net/npm/pdfobject@2.2.7/pdfobject.min.js","integrity":"sha256-ph3Dk89VmuTVXG6x/RDzk53SU9LPdAh1tpv0UvnDZ2I="},"url":"/lib/pdf/web/viewer.html"}</script>
+  <script src="/js/third-party/tags/pdf.js"></script>
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdn.jsdelivr.net/npm/mermaid@8.13.4/dist/mermaid.min.js","integrity":"sha256-96rwDGMWIQYB0yKGp1sKi1yrjrLPj2oT39IpbCsIrsg="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"jinyaqia","repo":"blog-comment","client_id":"ea6cb44e5638bedc01d4","client_secret":"97db4a8c6538abe952ed33bb4c96f67de3ecf59b","admin_user":"jinyaqia","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js","integrity":"sha256-Pmj85ojLaPOWwRtlMJwmezB/Qg8BzvJp5eTzvXaYAfA="},"path_md5":"0e946a3c5c9d0fa17e9ebe13c4c6faca"}</script>
+<script src="/js/third-party/comments/gitalk.js"></script>
+
+</body>
+</html>
