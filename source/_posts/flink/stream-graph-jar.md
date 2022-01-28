@@ -8,9 +8,17 @@ categories:
 
 # flink作业提交源码解析(2) - StreamGraph的生成 
 
+版本
+
+```
+flink: release-1.14
+os: ubuntu 16.04
+IDE: IDEA
+```
+
 ## WordCount源码及执行流程概览
 
-上文[flink作业提交源码解析(1)](flink-client.md)中说道`fink-client`中的方法`callMainMethod`使用了反射机制，去运行用户代码的入口类。本文就进一步研究用户的代码执行的逻辑。
+上文[flink作业提交源码解析(1)](../flink-client)中说道`fink-client`中的方法`callMainMethod`使用了反射机制，去运行用户代码的入口类。本文就进一步研究用户的代码执行的逻辑。
 
 使用自带的WordCount.jar作为例子。运行命令如下：
 
@@ -82,7 +90,7 @@ public JobExecutionResult execute(String jobName) throws Exception {
     }
 ```
 
-## 获取和生成`StreamExecutionEnvironment`
+### 获取和生成`StreamExecutionEnvironment`
 
 ```java
 final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();

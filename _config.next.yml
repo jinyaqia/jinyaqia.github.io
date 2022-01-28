@@ -220,8 +220,8 @@ post_edit:
 post_navigation: left
 
 tagcloud:
-  min: 12 # Minimum font size in px
-  max: 30 # Maximum font size in px
+  min: 8 # Minimum font size in px
+  max: 16 # Maximum font size in px
   amount: 200 # Total amount of tags
   orderby: name # Order of tags
   order: 1 # Sort order
@@ -260,8 +260,8 @@ codeblock:
   # Code Highlight theme
   # All available themes: https://theme-next.js.org/highlight/
   theme:
-    light: vs2015
-    dark: vs2015
+    light: xcode
+    dark: xcode
   # prism:
   #   light: prism-material-oceanic
   #   dark: prism-dark
@@ -269,7 +269,7 @@ codeblock:
   copy_button:
     enable: true
     # Available values: default | flat | mac
-    style: flat
+    style: mac
 
 back2top:
   enable: true
@@ -287,7 +287,7 @@ reading_progress:
 
 # Bookmark Support
 bookmark:
-  enable: false
+  enable: true
   # Customize the color of the bookmark.
   color: "#222"
   # If auto, save the reading progress when closing the page or clicking the bookmark-icon.
@@ -304,28 +304,29 @@ font:
   host: //fonts.loli.net
   codes:
     external: true
-    family: Inconsolata
+    family: Roboto Mono
   global:
     external: true
     family: Lato
-    size:
+    size: 0.7
 
   # Font settings for site title (.site-title).
   title:
     external: true
     family:
-    size:
+    size: 
 
   # Font settings for headlines (<h1> to <h6>).
   headings:
     external: true
     family:
-    size:
+    size: 
 
   # Font settings for posts (.post-body).
   posts:
     external: true
-    family:
+    family: 
+    size: 
 
 
 # ============================================================= #

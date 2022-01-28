@@ -7,14 +7,24 @@ categories:
 ---
 # flink作业提交源码解析（1）-命令行解析及运行
 
+版本
+
+```
+flink: release-1.14
+os: ubuntu 16.04
+IDE: IDEA
+```
+
 从`bin/flink` 这个提交脚本最后一行
+
 ```shell
 exec "${JAVA_RUN}" $JVM_ARGS $FLINK_ENV_JAVA_OPTS "${log_setting[@]}" -classpath "`manglePathList "$CC_CLASSPATH:$INTERNAL_HADOOP_CLASSPATHS"`" org.apache.flink.client.cli.CliFrontend "$@"
 ```
 可以看出，入口类为`org.apache.flink.client.cli.CliFrontend`。
 
-[开启远程调试功能](remote-debug.md),在`org.apache.flink.client.cli.CliFrontend`的main函数中打断点。
+[开启远程调试功能](../remote-debug),在`org.apache.flink.client.cli.CliFrontend`的main函数中打断点。
 
+<!--more-->
 ## 总流程
 
 flink-client 入口: CliFrontend.java
@@ -237,7 +247,7 @@ private final SavepointRestoreSettings savepointSettings;
    - 使用当前类加载器和配置去初始化`ContextEnvironment`和`StreamContextEnvironment`，这两种`ExecutionEnvironment`在运行用户代码的时候会用到，用户代码中的 getExecutionEnvironment 会返回该 Environment
    - 运行用户代码
 - 重设为原来的`classloader`，即`AppClassLoader`
-   
+  
    ```java
    //ClientUtils.java
    public static void executeProgram(
