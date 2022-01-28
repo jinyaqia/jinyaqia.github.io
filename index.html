@@ -16,12 +16,12 @@
 
 <link rel="stylesheet" href="/css/main.css">
 
-<link rel="stylesheet" href="//fonts.loli.net/css?family=Lato:300,300italic,400,400italic,700,700italic%7CInconsolata:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="//fonts.loli.net/css?family=Lato:300,300italic,400,400italic,700,700italic%7CRoboto+Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"jinyaqia.github.io.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.8.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"jinyaqia.github.io.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.8.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 <meta property="og:type" content="website">
 <meta property="og:title" content="洽洽的博客">
 <meta property="og:url" content="https://jinyaqia.github.io.com/index.html">
@@ -203,6 +203,7 @@
 
     
   <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
 
 <noscript>
   <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
@@ -250,7 +251,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2022-01-28 15:46:53" itemprop="dateModified" datetime="2022-01-28T15:46:53+08:00">2022-01-28</time>
+        <time title="修改时间：2022-01-28 16:20:38" itemprop="dateModified" datetime="2022-01-28T16:20:38+08:00">2022-01-28</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -286,7 +287,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="flink作业提交源码解析-2-StreamGraph的生成"><a href="#flink作业提交源码解析-2-StreamGraph的生成" class="headerlink" title="flink作业提交源码解析(2) - StreamGraph的生成"></a>flink作业提交源码解析(2) - StreamGraph的生成</h1><h2 id="WordCount源码及执行流程概览"><a href="#WordCount源码及执行流程概览" class="headerlink" title="WordCount源码及执行流程概览"></a>WordCount源码及执行流程概览</h2><p>上文<a href="../flink-client.md">flink作业提交源码解析(1)</a>中说道<code>fink-client</code>中的方法<code>callMainMethod</code>使用了反射机制，去运行用户代码的入口类。本文就进一步研究用户的代码执行的逻辑。</p>
+          <h1 id="flink作业提交源码解析-2-StreamGraph的生成"><a href="#flink作业提交源码解析-2-StreamGraph的生成" class="headerlink" title="flink作业提交源码解析(2) - StreamGraph的生成"></a>flink作业提交源码解析(2) - StreamGraph的生成</h1><p>版本</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">flink</span>: release-<span class="number">1</span>.<span class="number">14</span></span><br><span class="line"><span class="attribute">os</span>: ubuntu <span class="number">16</span>.<span class="number">04</span></span><br><span class="line"><span class="attribute">IDE</span>: IDEA</span><br></pre></td></tr></table></figure>
+
+<h2 id="WordCount源码及执行流程概览"><a href="#WordCount源码及执行流程概览" class="headerlink" title="WordCount源码及执行流程概览"></a>WordCount源码及执行流程概览</h2><p>上文<a href="../flink-client">flink作业提交源码解析(1)</a>中说道<code>fink-client</code>中的方法<code>callMainMethod</code>使用了反射机制，去运行用户代码的入口类。本文就进一步研究用户的代码执行的逻辑。</p>
 <p>使用自带的WordCount.jar作为例子。运行命令如下：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bin/flink run -t remote -d ./examples/streaming/WordCount.jar</span><br></pre></td></tr></table></figure>
           <!--noindex-->
@@ -297,173 +301,6 @@
             </div>
           <!--/noindex-->
         
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://jinyaqia.github.io.com/flink/flink-client/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/logo.png">
-      <meta itemprop="name" content="洽洽">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="洽洽的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/flink/flink-client/" class="post-title-link" itemprop="url">flink作业提交源码解析(1)</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2022-01-23 14:43:57" itemprop="dateCreated datePublished" datetime="2022-01-23T14:43:57+08:00">2022-01-23</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2022-01-28 15:46:25" itemprop="dateModified" datetime="2022-01-28T15:46:25+08:00">2022-01-28</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/flink/" itemprop="url" rel="index"><span itemprop="name">flink</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>1.3k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="flink作业提交源码解析（1）-命令行解析及运行"><a href="#flink作业提交源码解析（1）-命令行解析及运行" class="headerlink" title="flink作业提交源码解析（1）-命令行解析及运行"></a>flink作业提交源码解析（1）-命令行解析及运行</h1><p>从<code>bin/flink</code> 这个提交脚本最后一行</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">exec &quot;$&#123;JAVA_RUN&#125;&quot; $JVM_ARGS $FLINK_ENV_JAVA_OPTS &quot;$&#123;log_setting[@]&#125;&quot; -classpath &quot;`manglePathList &quot;$CC_CLASSPATH:$INTERNAL_HADOOP_CLASSPATHS&quot;`&quot; org.apache.flink.client.cli.CliFrontend &quot;$@&quot;</span><br></pre></td></tr></table></figure>
-<p>可以看出，入口类为<code>org.apache.flink.client.cli.CliFrontend</code>。</p>
-<p><a href="../remote-debug.md">开启远程调试功能</a>,在<code>org.apache.flink.client.cli.CliFrontend</code>的main函数中打断点。</p>
-<h2 id="总流程"><a href="#总流程" class="headerlink" title="总流程"></a>总流程</h2><p>flink-client 入口: CliFrontend.java</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** Submits the job based on the arguments. */</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(<span class="keyword">final</span> String[] args)</span> </span>&#123;</span><br><span class="line">       <span class="comment">//加载环境变量，包括 code revision, current user, Java version, Hadoop version, JVM parameters</span></span><br><span class="line">       EnvironmentInformation.logEnvironmentInfo(LOG, <span class="string">&quot;Command Line Client&quot;</span>, args);</span><br><span class="line"></span><br><span class="line">       <span class="comment">// 1. find the configuration directory</span></span><br><span class="line">       <span class="keyword">final</span> String configurationDirectory = getConfigurationDirectoryFromEnv();</span><br><span class="line"></span><br><span class="line">       <span class="comment">// 2. load the global configuration</span></span><br><span class="line">       <span class="keyword">final</span> Configuration configuration =</span><br><span class="line">               GlobalConfiguration.loadConfiguration(configurationDirectory);</span><br><span class="line"></span><br><span class="line">       <span class="comment">// 3. load the custom command lines</span></span><br><span class="line">       <span class="keyword">final</span> List&lt;CustomCommandLine&gt; customCommandLines =</span><br><span class="line">               loadCustomCommandLines(configuration, configurationDirectory);</span><br><span class="line"></span><br><span class="line">       <span class="keyword">int</span> retCode = <span class="number">31</span>;</span><br><span class="line">       <span class="keyword">try</span> &#123;</span><br><span class="line">           <span class="keyword">final</span> CliFrontend cli = <span class="keyword">new</span> CliFrontend(configuration, customCommandLines);</span><br><span class="line"></span><br><span class="line">           SecurityUtils.install(<span class="keyword">new</span> SecurityConfiguration(cli.configuration));</span><br><span class="line">           retCode = SecurityUtils.getInstalledContext().runSecured(() -&gt; cli.parseAndRun(args));</span><br><span class="line">       &#125; <span class="keyword">catch</span> (Throwable t) &#123;</span><br><span class="line">           <span class="keyword">final</span> Throwable strippedThrowable =</span><br><span class="line">                   ExceptionUtils.stripException(t, UndeclaredThrowableException.class);</span><br><span class="line">           LOG.error(<span class="string">&quot;Fatal error while running command line interface.&quot;</span>, strippedThrowable);</span><br><span class="line">           strippedThrowable.printStackTrace();</span><br><span class="line">       &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">           System.exit(retCode);</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
-
-<p>主要分为4个步骤：</p>
-<ol>
-<li>加载环境变量，包括 code revision, current user, Java version, Hadoop version, JVM parameters等，然后从环境变量中获取到flink的配置目录</li>
-<li>解析配置，读取``flink-conf.yaml`，如下图所示</li>
-</ol>
-<p><img src="../../images/flink/flink-client/client.png" alt="image-20220123145950769" loading="lazy"></p>
-<ol start="3">
-<li><p>初始化命令行解析入口，这里包含了一下三种命令行解析入口类</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//运行bin/flink run-application xx 或者bin/flink run -t xxx的 ，</span></span><br><span class="line"><span class="comment">//-t包含了&quot;remote&quot;, &quot;local&quot;, &quot;kubernetes-session&quot;,&quot;yarn-per-job&quot;, &quot;yarn-session&quot;等模式</span></span><br><span class="line">org.apache.flink.client.cli.GenericCLI</span><br><span class="line"><span class="comment">//提交到yarn session集群的命令行解析入口</span></span><br><span class="line">org.apache.flink.yarn.cli.FlinkYarnSessionCli</span><br><span class="line"><span class="comment">//默认的命令行解析入口类，提交到standalone集群</span></span><br><span class="line">org.apache.flink.client.cli.DefaultCLI</span><br></pre></td></tr></table></figure></li>
-<li><p>初始化<code>CliFrontend</code>,执行<code>cli.parseAndRun(args)</code>，完成flink client的主要逻辑，其中我们最需要关注的，便是<code>cli.parseAndRun(args)</code>做了些什么事情。</p>
-</li>
-</ol>
-<h2 id="命令行解析和运行"><a href="#命令行解析和运行" class="headerlink" title="命令行解析和运行"></a>命令行解析和运行</h2><p>进入<code>parseAndRun</code>函数中，可以看到程序通过解析第一个参数，来判断进入进入哪种具体的逻辑，然后把args[1:]的作为参数<code>params</code>传入具体函数里。这里我们使用第一种，即进入<code>run(params)</code>中。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">parseAndRun</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// check for action</span></span><br><span class="line">        <span class="keyword">if</span> (args.length &lt; <span class="number">1</span>) &#123;</span><br><span class="line">            CliFrontendParser.printHelp(customCommandLines);</span><br><span class="line">            System.out.println(<span class="string">&quot;Please specify an action.&quot;</span>);</span><br><span class="line">            <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// get action</span></span><br><span class="line">        String action = args[<span class="number">0</span>];</span><br><span class="line">        <span class="comment">// remove action from parameters</span></span><br><span class="line">        <span class="keyword">final</span> String[] params = Arrays.copyOfRange(args, <span class="number">1</span>, args.length);</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// do action</span></span><br><span class="line">            <span class="keyword">switch</span> (action) &#123;</span><br><span class="line">                <span class="keyword">case</span> ACTION_RUN:</span><br><span class="line">                    run(params);</span><br><span class="line">                    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">                <span class="keyword">case</span> ACTION_RUN_APPLICATION:</span><br><span class="line">                    runApplication(params);</span><br><span class="line">                    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">                <span class="keyword">case</span> ACTION_LIST:</span><br><span class="line">                    list(params);</span><br><span class="line">                    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">                <span class="keyword">case</span> ACTION_INFO:</span><br><span class="line">                    info(params);</span><br><span class="line">                    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">                <span class="keyword">case</span> ACTION_CANCEL:</span><br><span class="line">                    cancel(params);</span><br><span class="line">                    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">                <span class="keyword">case</span> ACTION_STOP:</span><br><span class="line">                    stop(params);</span><br><span class="line">                    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">                <span class="keyword">case</span> ACTION_SAVEPOINT:</span><br><span class="line">                    savepoint(params);</span><br><span class="line">                    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">   ...</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    LOG.info(<span class="string">&quot;Running &#x27;run&#x27; command.&quot;</span>);</span><br><span class="line">	<span class="comment">//1. 获取支持的参数</span></span><br><span class="line">    <span class="keyword">final</span> Options commandOptions = CliFrontendParser.getRunCommandOptions();</span><br><span class="line">    <span class="comment">//2. 解析args，封装到命令行工具类里</span></span><br><span class="line">    <span class="keyword">final</span> CommandLine commandLine = getCommandLine(commandOptions, args, <span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// evaluate help flag</span></span><br><span class="line">    <span class="keyword">if</span> (commandLine.hasOption(HELP_OPTION.getOpt())) &#123;</span><br><span class="line">        CliFrontendParser.printHelpForRun(customCommandLines);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">final</span> CustomCommandLine activeCommandLine =</span><br><span class="line">            validateAndGetActiveCommandLine(checkNotNull(commandLine));</span><br><span class="line">	<span class="comment">//3. 使用解析到的commandLine去生成ProgramOptions</span></span><br><span class="line">    <span class="keyword">final</span> ProgramOptions programOptions = ProgramOptions.create(commandLine);</span><br><span class="line">	<span class="comment">//4. 提取作业的入口jar包</span></span><br><span class="line">    <span class="keyword">final</span> List&lt;URL&gt; jobJars = getJobJarAndDependencies(programOptions);</span><br><span class="line">	<span class="comment">//5. 提取有效的配置</span></span><br><span class="line">    <span class="keyword">final</span> Configuration effectiveConfiguration =</span><br><span class="line">            getEffectiveConfiguration(activeCommandLine, commandLine, programOptions, jobJars);</span><br><span class="line"></span><br><span class="line">    LOG.debug(<span class="string">&quot;Effective executor configuration: &#123;&#125;&quot;</span>, effectiveConfiguration);</span><br><span class="line">	<span class="comment">//6. 构建PackagedProgram</span></span><br><span class="line">    <span class="keyword">try</span> (PackagedProgram program = getPackagedProgram(programOptions, effectiveConfiguration)) &#123;</span><br><span class="line">        <span class="comment">//7. 执行用户jar包逻辑以及提交作业</span></span><br><span class="line">        executeProgram(effectiveConfiguration, program);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>run函数包含了以下步骤</p>
-<ol>
-<li>获取<code>DefaultCLI</code>这个命令行解析入口类支持的参数，包含以下参数，所有的参数都封装在<code>org.apache.commons.cli.Options</code>里。</li>
-</ol>
-<p><img src="../../images/flink/flink-client/client-1.png" alt="image-20220123154347506" loading="lazy"></p>
-<ol start="2">
-<li>解析args，将解析结果封装到命令行工具类里，如下图</li>
-</ol>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">bin/flink run -d -p <span class="number">1</span> -m <span class="number">10.219</span><span class="number">.57</span><span class="number">.87</span>:<span class="number">8081</span>  \</span><br><span class="line">-C file:/home/jinyaqia/blink-test/flink-connector-kafka_2<span class="number">.12</span>-<span class="number">1.14</span><span class="number">.2</span>.jar \</span><br><span class="line">-C file:/home/jinyaqia/blink-test/flink-text-<span class="number">0.1</span><span class="number">.0</span>-SNAPSHOT.jar \</span><br><span class="line">/home/jinyaqia/blink-test/flink-sql-submit-<span class="number">0.1</span><span class="number">.0</span>-SNAPSHOT.jar</span><br><span class="line">-name query_6311_dw_liangyu_211112104148</span><br><span class="line">-f /home/jinyaqia/blink-test/114kafka.sql</span><br></pre></td></tr></table></figure>
-
-<p><img src="../../images/flink/flink-client/client-2.png" alt="image-20220123155127326" loading="lazy"></p>
-<ol start="3">
-<li><p>生成<code>ProgramOptions</code></p>
-<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** Base class for command line options that refer to a JAR file program. */</span></span><br><span class="line">public <span class="class"><span class="keyword">class</span> <span class="title">ProgramOptions</span> <span class="keyword">extends</span> <span class="title">CommandLineOptions</span> </span>&#123;</span><br><span class="line">	<span class="comment">//用户入口jar包</span></span><br><span class="line">    <span class="keyword">private</span> <span class="type">String</span> jarFilePath;</span><br><span class="line">	<span class="comment">//用户入口类，可以用-c指定，也可以打包入口jar包的时候，指定入口类</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="type">String</span> entryPointClass;</span><br><span class="line">	<span class="comment">//通过-C指定的classpath</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">List</span>&lt;<span class="type">URL</span>&gt; classpaths;</span><br><span class="line">	<span class="comment">//用户入口类的参数</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">String</span>[] programArgs;</span><br><span class="line">	<span class="comment">//-p指定的并行度</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> int parallelism;</span><br><span class="line">	<span class="comment">//用-d表示detached模式,即提交作业后，退出client</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> boolean detachedMode;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> boolean shutdownOnAttachedExit;</span><br><span class="line">	<span class="comment">//savapoint设置</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">SavepointRestoreSettings</span> savepointSettings;</span><br></pre></td></tr></table></figure>
-
-<p><img src="../../images/flink/flink-client/client-3.png" alt="image-20220123160907260" loading="lazy"></p>
-</li>
-<li><p>提取作业的入口jar包</p>
-</li>
-<li><p>提取有效的配置到<code>Configuration</code></p>
-<p><img src="../../images/flink/flink-client/client-4.png" alt="image-20220123162346128" loading="lazy"></p>
-</li>
-<li><p>构建<code>PackagedProgram</code>,该类用于描述用户提交的作业及其依赖的文件等。</p>
-</li>
-</ol>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//包含以下属性</span></span><br><span class="line"><span class="comment">//用户入口jar包</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> URL jarFile;</span><br><span class="line"><span class="comment">//入口jar包的参数</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> String[] args;</span><br><span class="line"><span class="comment">//入口类</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Class&lt;?&gt; mainClass;</span><br><span class="line"><span class="comment">//其他资源文件</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> List&lt;File&gt; extractedTempLibraries;</span><br><span class="line"><span class="comment">//-C传入的classpath</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> List&lt;URL&gt; classpaths;</span><br><span class="line"><span class="comment">//用户类加载器</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> URLClassLoader userCodeClassLoader;</span><br><span class="line"><span class="comment">//savepoint设置</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> SavepointRestoreSettings savepointSettings;</span><br></pre></td></tr></table></figure>
-
-<p><img src="../../images/flink/flink-client/client-5.png" alt="image-20220123163132191" loading="lazy"></p>
-<ol start="7">
-<li><p>执行用户jar包代码逻辑以及提交作业</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">executeProgram</span><span class="params">(<span class="keyword">final</span> Configuration configuration, <span class="keyword">final</span> PackagedProgram program)</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> ProgramInvocationException </span>&#123;</span><br><span class="line">    ClientUtils.executeProgram(</span><br><span class="line">            <span class="keyword">new</span> DefaultExecutorServiceLoader(), configuration, program, <span class="keyword">false</span>, <span class="keyword">false</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>具体的执行逻辑如下：</p>
-<ul>
-<li>从<code>PackagedProgram</code>中获取用于加载用户代码的类加载器，这里是<code>ChildFirstClassLoader</code>，该类可以在flink-conf.yaml中配置<code>classloader.resolve-order</code>,默认为<code>child-first</code></li>
-<li>设置当前执行线程的<code>classloader</code>为<code>ChildFirstClassLoader</code></li>
-<li>使用当前类加载器和配置去初始化<code>ContextEnvironment</code>和<code>StreamContextEnvironment</code>，这两种<code>ExecutionEnvironment</code>在运行用户代码的时候会用到，用户代码中的 getExecutionEnvironment 会返回该 Environment</li>
-<li>运行用户代码</li>
-</ul>
-</li>
-</ol>
-<ul>
-<li>重设为原来的<code>classloader</code>，即<code>AppClassLoader</code> <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//ClientUtils.java</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">executeProgram</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">        PipelineExecutorServiceLoader executorServiceLoader,</span></span></span><br><span class="line"><span class="params"><span class="function">        Configuration configuration,</span></span></span><br><span class="line"><span class="params"><span class="function">        PackagedProgram program,</span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="keyword">boolean</span> enforceSingleJobExecution,</span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="keyword">boolean</span> suppressSysout)</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> ProgramInvocationException </span>&#123;</span><br><span class="line">    checkNotNull(executorServiceLoader);</span><br><span class="line">    <span class="keyword">final</span> ClassLoader userCodeClassLoader = program.getUserCodeClassLoader();</span><br><span class="line">    <span class="keyword">final</span> ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        Thread.currentThread().setContextClassLoader(userCodeClassLoader);</span><br><span class="line"></span><br><span class="line">        LOG.info(</span><br><span class="line">                <span class="string">&quot;Starting program (detached: &#123;&#125;)&quot;</span>,</span><br><span class="line">                !configuration.getBoolean(DeploymentOptions.ATTACHED));</span><br><span class="line">		<span class="comment">//用户代码中的 getExecutionEnvironment 会返回该 Environment</span></span><br><span class="line">        ContextEnvironment.setAsContext(</span><br><span class="line">                executorServiceLoader,</span><br><span class="line">                configuration,</span><br><span class="line">                userCodeClassLoader,</span><br><span class="line">                enforceSingleJobExecution,</span><br><span class="line">                suppressSysout);</span><br><span class="line"></span><br><span class="line">        StreamContextEnvironment.setAsContext(</span><br><span class="line">                executorServiceLoader,</span><br><span class="line">                configuration,</span><br><span class="line">                userCodeClassLoader,</span><br><span class="line">                enforceSingleJobExecution,</span><br><span class="line">                suppressSysout);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            program.invokeInteractiveModeForExecution();</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            ContextEnvironment.unsetAsContext();</span><br><span class="line">            StreamContextEnvironment.unsetAsContext();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        Thread.currentThread().setContextClassLoader(contextClassLoader);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-</ul>
-<h2 id="用户代码的运行"><a href="#用户代码的运行" class="headerlink" title="用户代码的运行"></a>用户代码的运行</h2><p>在运行用户代码的时候，初始化了<code>ContextEnvironment</code>和<code>StreamContextEnvironment</code>。调用<code>callMainMethod</code>方法。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * This method assumes that the context environment is prepared, or the execution will be a</span></span><br><span class="line"><span class="comment"> * local execution by default.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">invokeInteractiveModeForExecution</span><span class="params">()</span> <span class="keyword">throws</span> ProgramInvocationException </span>&#123;</span><br><span class="line">    FlinkSecurityManager.monitorUserSystemExitForCurrentThread();</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        callMainMethod(mainClass, args);</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        FlinkSecurityManager.unmonitorUserSystemExitForCurrentThread();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><code>callMainMethod</code>使用了反射机制，去运行用户代码的入口类。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">callMainMethod</span><span class="params">(Class&lt;?&gt; entryClass, String[] args)</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> ProgramInvocationException </span>&#123;</span><br><span class="line">    Method mainMethod;</span><br><span class="line">    <span class="keyword">if</span> (!Modifier.isPublic(entryClass.getModifiers())) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> ProgramInvocationException(</span><br><span class="line">                <span class="string">&quot;The class &quot;</span> + entryClass.getName() + <span class="string">&quot; must be public.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        mainMethod = entryClass.getMethod(<span class="string">&quot;main&quot;</span>, String[].class);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (NoSuchMethodException e) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> ProgramInvocationException(</span><br><span class="line">                <span class="string">&quot;The class &quot;</span> + entryClass.getName() + <span class="string">&quot; has no main(String[]) method.&quot;</span>);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Throwable t) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> ProgramInvocationException(</span><br><span class="line">                <span class="string">&quot;Could not look up the main(String[]) method from the class &quot;</span></span><br><span class="line">                        + entryClass.getName()</span><br><span class="line">                        + <span class="string">&quot;: &quot;</span></span><br><span class="line">                        + t.getMessage(),</span><br><span class="line">                t);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!Modifier.isStatic(mainMethod.getModifiers())) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> ProgramInvocationException(</span><br><span class="line">                <span class="string">&quot;The class &quot;</span> + entryClass.getName() + <span class="string">&quot; declares a non-static main method.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (!Modifier.isPublic(mainMethod.getModifiers())) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> ProgramInvocationException(</span><br><span class="line">                <span class="string">&quot;The class &quot;</span> + entryClass.getName() + <span class="string">&quot; declares a non-public main method.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        mainMethod.invoke(<span class="keyword">null</span>, (Object) args);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IllegalArgumentException e) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> ProgramInvocationException(</span><br><span class="line">                <span class="string">&quot;Could not invoke the main method, arguments are not matching.&quot;</span>, e);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IllegalAccessException e) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> ProgramInvocationException(</span><br><span class="line">                <span class="string">&quot;Access to the main method was denied: &quot;</span> + e.getMessage(), e);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (InvocationTargetException e) &#123;</span><br><span class="line">        Throwable exceptionInMethod = e.getTargetException();</span><br><span class="line">        <span class="keyword">if</span> (exceptionInMethod <span class="keyword">instanceof</span> Error) &#123;</span><br><span class="line">            <span class="keyword">throw</span> (Error) exceptionInMethod;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (exceptionInMethod <span class="keyword">instanceof</span> ProgramParametrizationException) &#123;</span><br><span class="line">            <span class="keyword">throw</span> (ProgramParametrizationException) exceptionInMethod;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (exceptionInMethod <span class="keyword">instanceof</span> ProgramInvocationException) &#123;</span><br><span class="line">            <span class="keyword">throw</span> (ProgramInvocationException) exceptionInMethod;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> ProgramInvocationException(</span><br><span class="line">                    <span class="string">&quot;The main method caused an error: &quot;</span> + exceptionInMethod.getMessage(),</span><br><span class="line">                    exceptionInMethod);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Throwable t) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> ProgramInvocationException(</span><br><span class="line">                <span class="string">&quot;An error occurred while invoking the program&#x27;s main method: &quot;</span> + t.getMessage(),</span><br><span class="line">                t);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1786426">Flink Client 实现原理与源码解析（保姆级教学）</a></p>
-
       
     </div>
 
@@ -555,6 +392,113 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/flink/remote-debug/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://jinyaqia.github.io.com/flink/flink-client/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/logo.png">
+      <meta itemprop="name" content="洽洽">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="洽洽的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/flink/flink-client/" class="post-title-link" itemprop="url">flink作业提交源码解析(1)</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-01-23 14:43:57" itemprop="dateCreated datePublished" datetime="2022-01-23T14:43:57+08:00">2022-01-23</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2022-01-28 16:20:20" itemprop="dateModified" datetime="2022-01-28T16:20:20+08:00">2022-01-28</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/flink/" itemprop="url" rel="index"><span itemprop="name">flink</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="flink作业提交源码解析（1）-命令行解析及运行"><a href="#flink作业提交源码解析（1）-命令行解析及运行" class="headerlink" title="flink作业提交源码解析（1）-命令行解析及运行"></a>flink作业提交源码解析（1）-命令行解析及运行</h1><p>版本</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">flink</span>: release-<span class="number">1</span>.<span class="number">14</span></span><br><span class="line"><span class="attribute">os</span>: ubuntu <span class="number">16</span>.<span class="number">04</span></span><br><span class="line"><span class="attribute">IDE</span>: IDEA</span><br></pre></td></tr></table></figure>
+
+<p>从<code>bin/flink</code> 这个提交脚本最后一行</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">exec &quot;$&#123;JAVA_RUN&#125;&quot; $JVM_ARGS $FLINK_ENV_JAVA_OPTS &quot;$&#123;log_setting[@]&#125;&quot; -classpath &quot;`manglePathList &quot;$CC_CLASSPATH:$INTERNAL_HADOOP_CLASSPATHS&quot;`&quot; org.apache.flink.client.cli.CliFrontend &quot;$@&quot;</span><br></pre></td></tr></table></figure>
+<p>可以看出，入口类为<code>org.apache.flink.client.cli.CliFrontend</code>。</p>
+<p><a href="../remote-debug">开启远程调试功能</a>,在<code>org.apache.flink.client.cli.CliFrontend</code>的main函数中打断点。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/flink/flink-client/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1358,7 +1302,7 @@
   <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js" integrity="sha256-EdPgYcPk/IIrw7FYeuJQexva49pVRZNmt3LculEr7zM=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script><script src="/js/pjax.js"></script>
 
   
 <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>

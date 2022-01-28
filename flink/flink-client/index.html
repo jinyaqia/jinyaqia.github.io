@@ -16,18 +16,18 @@
 
 <link rel="stylesheet" href="/css/main.css">
 
-<link rel="stylesheet" href="//fonts.loli.net/css?family=Lato:300,300italic,400,400italic,700,700italic%7CInconsolata:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="//fonts.loli.net/css?family=Lato:300,300italic,400,400italic,700,700italic%7CRoboto+Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"jinyaqia.github.io.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.8.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
-<meta name="description" content="flink作业提交源码解析（1）-命令行解析及运行从bin&#x2F;flink 这个提交脚本最后一行 1exec &quot;$&amp;#123;JAVA_RUN&amp;#125;&quot; $JVM_ARGS $FLINK_ENV_JAVA_OPTS &quot;$&amp;#123;log_setting[@]&amp;#125;&quot; -classpath &quot;&#96;manglePathList &quot;$CC">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"jinyaqia.github.io.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.8.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="flink作业提交源码解析（1）-命令行解析及运行版本 123flink: release-1.14os: ubuntu 16.04IDE: IDEA  从bin&#x2F;flink 这个提交脚本最后一行 1exec &quot;$&amp;#123;JAVA_RUN&amp;#125;&quot; $JVM_ARGS $FLINK_ENV_JAVA_OPTS &quot;$&amp;#123;log_setting[@]&amp;#1">
 <meta property="og:type" content="article">
 <meta property="og:title" content="flink作业提交源码解析(1)">
 <meta property="og:url" content="https://jinyaqia.github.io.com/flink/flink-client/index.html">
 <meta property="og:site_name" content="洽洽的博客">
-<meta property="og:description" content="flink作业提交源码解析（1）-命令行解析及运行从bin&#x2F;flink 这个提交脚本最后一行 1exec &quot;$&amp;#123;JAVA_RUN&amp;#125;&quot; $JVM_ARGS $FLINK_ENV_JAVA_OPTS &quot;$&amp;#123;log_setting[@]&amp;#125;&quot; -classpath &quot;&#96;manglePathList &quot;$CC">
+<meta property="og:description" content="flink作业提交源码解析（1）-命令行解析及运行版本 123flink: release-1.14os: ubuntu 16.04IDE: IDEA  从bin&#x2F;flink 这个提交脚本最后一行 1exec &quot;$&amp;#123;JAVA_RUN&amp;#125;&quot; $JVM_ARGS $FLINK_ENV_JAVA_OPTS &quot;$&amp;#123;log_setting[@]&amp;#1">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://jinyaqia.github.io.com/images/flink/flink-client/client.png">
 <meta property="og:image" content="https://jinyaqia.github.io.com/images/flink/flink-client/client-1.png">
@@ -36,7 +36,7 @@
 <meta property="og:image" content="https://jinyaqia.github.io.com/images/flink/flink-client/client-4.png">
 <meta property="og:image" content="https://jinyaqia.github.io.com/images/flink/flink-client/client-5.png">
 <meta property="article:published_time" content="2022-01-23T06:43:57.000Z">
-<meta property="article:modified_time" content="2022-01-28T07:46:25.496Z">
+<meta property="article:modified_time" content="2022-01-28T08:20:20.523Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="flink">
 <meta name="twitter:card" content="summary">
@@ -215,6 +215,7 @@
 
     
   <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
 
 <noscript>
   <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
@@ -263,7 +264,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2022-01-28 15:46:25" itemprop="dateModified" datetime="2022-01-28T15:46:25+08:00">2022-01-28</time>
+        <time title="修改时间：2022-01-28 16:20:20" itemprop="dateModified" datetime="2022-01-28T16:20:20+08:00">2022-01-28</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -306,10 +307,14 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="flink作业提交源码解析（1）-命令行解析及运行"><a href="#flink作业提交源码解析（1）-命令行解析及运行" class="headerlink" title="flink作业提交源码解析（1）-命令行解析及运行"></a>flink作业提交源码解析（1）-命令行解析及运行</h1><p>从<code>bin/flink</code> 这个提交脚本最后一行</p>
+        <h1 id="flink作业提交源码解析（1）-命令行解析及运行"><a href="#flink作业提交源码解析（1）-命令行解析及运行" class="headerlink" title="flink作业提交源码解析（1）-命令行解析及运行"></a>flink作业提交源码解析（1）-命令行解析及运行</h1><p>版本</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">flink</span>: release-<span class="number">1</span>.<span class="number">14</span></span><br><span class="line"><span class="attribute">os</span>: ubuntu <span class="number">16</span>.<span class="number">04</span></span><br><span class="line"><span class="attribute">IDE</span>: IDEA</span><br></pre></td></tr></table></figure>
+
+<p>从<code>bin/flink</code> 这个提交脚本最后一行</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">exec &quot;$&#123;JAVA_RUN&#125;&quot; $JVM_ARGS $FLINK_ENV_JAVA_OPTS &quot;$&#123;log_setting[@]&#125;&quot; -classpath &quot;`manglePathList &quot;$CC_CLASSPATH:$INTERNAL_HADOOP_CLASSPATHS&quot;`&quot; org.apache.flink.client.cli.CliFrontend &quot;$@&quot;</span><br></pre></td></tr></table></figure>
 <p>可以看出，入口类为<code>org.apache.flink.client.cli.CliFrontend</code>。</p>
-<p><a href="../remote-debug.md">开启远程调试功能</a>,在<code>org.apache.flink.client.cli.CliFrontend</code>的main函数中打断点。</p>
+<p><a href="../remote-debug">开启远程调试功能</a>,在<code>org.apache.flink.client.cli.CliFrontend</code>的main函数中打断点。</p>
+<span id="more"></span>
 <h2 id="总流程"><a href="#总流程" class="headerlink" title="总流程"></a>总流程</h2><p>flink-client 入口: CliFrontend.java</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** Submits the job based on the arguments. */</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(<span class="keyword">final</span> String[] args)</span> </span>&#123;</span><br><span class="line">       <span class="comment">//加载环境变量，包括 code revision, current user, Java version, Hadoop version, JVM parameters</span></span><br><span class="line">       EnvironmentInformation.logEnvironmentInfo(LOG, <span class="string">&quot;Command Line Client&quot;</span>, args);</span><br><span class="line"></span><br><span class="line">       <span class="comment">// 1. find the configuration directory</span></span><br><span class="line">       <span class="keyword">final</span> String configurationDirectory = getConfigurationDirectoryFromEnv();</span><br><span class="line"></span><br><span class="line">       <span class="comment">// 2. load the global configuration</span></span><br><span class="line">       <span class="keyword">final</span> Configuration configuration =</span><br><span class="line">               GlobalConfiguration.loadConfiguration(configurationDirectory);</span><br><span class="line"></span><br><span class="line">       <span class="comment">// 3. load the custom command lines</span></span><br><span class="line">       <span class="keyword">final</span> List&lt;CustomCommandLine&gt; customCommandLines =</span><br><span class="line">               loadCustomCommandLines(configuration, configurationDirectory);</span><br><span class="line"></span><br><span class="line">       <span class="keyword">int</span> retCode = <span class="number">31</span>;</span><br><span class="line">       <span class="keyword">try</span> &#123;</span><br><span class="line">           <span class="keyword">final</span> CliFrontend cli = <span class="keyword">new</span> CliFrontend(configuration, customCommandLines);</span><br><span class="line"></span><br><span class="line">           SecurityUtils.install(<span class="keyword">new</span> SecurityConfiguration(cli.configuration));</span><br><span class="line">           retCode = SecurityUtils.getInstalledContext().runSecured(() -&gt; cli.parseAndRun(args));</span><br><span class="line">       &#125; <span class="keyword">catch</span> (Throwable t) &#123;</span><br><span class="line">           <span class="keyword">final</span> Throwable strippedThrowable =</span><br><span class="line">                   ExceptionUtils.stripException(t, UndeclaredThrowableException.class);</span><br><span class="line">           LOG.error(<span class="string">&quot;Fatal error while running command line interface.&quot;</span>, strippedThrowable);</span><br><span class="line">           strippedThrowable.printStackTrace();</span><br><span class="line">       &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">           System.exit(retCode);</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
 
@@ -396,13 +401,13 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/flink/remote-debug/" rel="prev" title="flink远程调试">
-                  <i class="fa fa-chevron-left"></i> flink远程调试
+                <a href="/flink/support-source/" rel="prev" title="flink单独调整source并行度">
+                  <i class="fa fa-chevron-left"></i> flink单独调整source并行度
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/flink/stream-graph-jar/" rel="next" title="flink作业提交源码解析(2) - StreamGraph的生成">
-                  flink作业提交源码解析(2) - StreamGraph的生成 <i class="fa fa-chevron-right"></i>
+                <a href="/flink/remote-debug/" rel="next" title="flink远程调试">
+                  flink远程调试 <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>
@@ -475,7 +480,7 @@
   <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js" integrity="sha256-EdPgYcPk/IIrw7FYeuJQexva49pVRZNmt3LculEr7zM=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script><script src="/js/pjax.js"></script>
 
   
 <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
